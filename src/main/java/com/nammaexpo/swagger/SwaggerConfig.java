@@ -1,4 +1,4 @@
-package org.sid.tool.swagger;
+package com.nammaexpo.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
  * Class is to enable swagger documentation
  *
  * @author siddesh
- * @since 09/jan/2020
+ * @since 25/May/2020
  */
 @Configuration
 @EnableSwagger2
@@ -24,7 +24,7 @@ public class SwaggerConfig {
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.sid.tool"))
+                .apis(RequestHandlerSelectors.basePackage("com.nammaexpo"))
                 .paths(regex("/.*"))
                 .build()
                 .apiInfo(metaData());
@@ -32,10 +32,10 @@ public class SwaggerConfig {
 
     private ApiInfo metaData() {
         return new ApiInfo(
-                "Spring Boot REST API", "Spring Boot REST API for Prject Management Tool",
+                "REST API", "virtual expo platform APIs",
                 "1.0",
                 "Terms of service",
-                "Siddesh",
+                "namm-expo",
                 "Apache License Version 2.0",
                 "https://www.apache.org/licenses/LICENSE-2.0");
     }
