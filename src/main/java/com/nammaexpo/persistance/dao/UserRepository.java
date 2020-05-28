@@ -1,6 +1,6 @@
-package com.nammaexpo.repository;
+package com.nammaexpo.persistance.dao;
 
-import com.nammaexpo.model.User;
+import com.nammaexpo.persistance.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

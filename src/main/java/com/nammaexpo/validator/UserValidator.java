@@ -1,7 +1,6 @@
 package com.nammaexpo.validator;
 
-import com.nammaexpo.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nammaexpo.persistance.model.User;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

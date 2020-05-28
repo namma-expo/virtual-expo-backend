@@ -1,4 +1,4 @@
-package com.nammaexpo.model;
+package com.nammaexpo.persistance.model;
 
 import javax.persistence.*;
 import java.util.Set;
