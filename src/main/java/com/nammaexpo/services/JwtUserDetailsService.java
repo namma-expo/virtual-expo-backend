@@ -1,23 +1,26 @@
 package com.nammaexpo.services;
 
-import java.util.ArrayList;
-
-import org.springframework.security.core.userdetails.User;
+import com.nammaexpo.persistance.dao.UserRepository;
+import com.nammaexpo.persistance.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
+    @Autowired
+    UserRepository userRepository;
+
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("admin".equals(username)) {
-            return new User("admin", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-                    new ArrayList<>());
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+
+        return JwtUserDetailsImpl.build(user);
     }
 }
