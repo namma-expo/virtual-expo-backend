@@ -19,9 +19,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,26 +70,26 @@ public class RegistrationController {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(EnumRole.ROLE_VISITOR)
+            Role userRole = roleRepository.findByName(EnumRole.VISITOR)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(EnumRole.ROLE_ADMIN)
+                        Role adminRole = roleRepository.findByName(EnumRole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
 
                         break;
                     case "exhibitor":
-                        Role modRole = roleRepository.findByName(EnumRole.ROLE_EXHIBITOR)
+                        Role modRole = roleRepository.findByName(EnumRole.EXHIBITOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
 
                         break;
                     case "visitor":
-                        Role userRole = roleRepository.findByName(EnumRole.ROLE_VISITOR)
+                        Role userRole = roleRepository.findByName(EnumRole.VISITOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
                 }
