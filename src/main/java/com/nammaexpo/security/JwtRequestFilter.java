@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.nammaexpo.user.JwtUserDetailsService;
+import com.nammaexpo.services.JwtUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
