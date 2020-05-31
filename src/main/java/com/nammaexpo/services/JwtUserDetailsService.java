@@ -1,5 +1,6 @@
 package com.nammaexpo.services;
 
+import com.nammaexpo.constants.VexpoConstants;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(VexpoConstants.ErrorMessage.USER_NOT_FOUND));
 
         return JwtUserDetailsImpl.build(user);
     }
