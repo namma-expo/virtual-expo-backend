@@ -1,12 +1,3 @@
 server:
   port: 8080
   context-path: /vexpo
-
-spring:
-  main:
-    banner-mode: "off"
-
-logging:
-  level:
-    org:
-      springframework: ERROR

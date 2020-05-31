@@ -10,6 +10,9 @@ import com.nammaexpo.persistance.model.Role;
 import com.nammaexpo.persistance.model.User;
 import com.nammaexpo.security.JwtTokenUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class RegistrationController {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -47,6 +52,8 @@ public class RegistrationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        LOGGER.info("Registration Controller has been invoked");
+
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
