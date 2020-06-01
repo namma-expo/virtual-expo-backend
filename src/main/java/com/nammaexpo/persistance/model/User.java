@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(	name = "users",
+@Table(	name = "user",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
@@ -32,7 +32,14 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @NotBlank
+    @Size(max=12)
+    private String contactNumber;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -41,10 +48,11 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password) {
+    public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 120) String password, @NotBlank @Size(max = 12) String contactNumber) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.contactNumber = contactNumber;
     }
 
     public Long getId() {
@@ -77,6 +85,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getContactNumer() {
+        return contactNumber;
+    }
+
+    public void setContactNumer(String contactNumer) {
+        this.contactNumber = contactNumer;
     }
 
     public Set<Role> getRoles() {

@@ -5,14 +5,12 @@ import com.nammaexpo.payload.request.SignupRequest;
 import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.RoleRepository;
 import com.nammaexpo.persistance.dao.UserRepository;
-import com.nammaexpo.persistance.model.EnumRole;
 import com.nammaexpo.persistance.model.Role;
 import com.nammaexpo.persistance.model.User;
 import com.nammaexpo.security.JwtTokenUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,37 +67,27 @@ public class RegistrationController {
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),signUpRequest.getContactNumber());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(EnumRole.VISITOR)
-                    .orElseThrow(() -> new RuntimeException(VexpoConstants.ErrorMessage.ROLE_NOT_FOUND));
-            roles.add(userRole);
-        } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(EnumRole.ADMIN)
-                                .orElseThrow(() -> new RuntimeException(VexpoConstants.ErrorMessage.ROLE_NOT_FOUND));
-                        roles.add(adminRole);
-
-                        break;
                     case "exhibitor":
-                        Role modRole = roleRepository.findByName(EnumRole.EXHIBITOR)
+                        Role dbrole1 = roleRepository.findByName(role)
                                 .orElseThrow(() -> new RuntimeException(VexpoConstants.ErrorMessage.ROLE_NOT_FOUND));
-                        roles.add(modRole);
+                        roles.add(dbrole1);
 
                         break;
                     case "visitor":
-                        Role userRole = roleRepository.findByName(EnumRole.VISITOR)
+                        Role dbrole2 = roleRepository.findByName(role)
                                 .orElseThrow(() -> new RuntimeException(VexpoConstants.ErrorMessage.ROLE_NOT_FOUND));
-                        roles.add(userRole);
+                        roles.add(dbrole2);
+                        break;
                 }
             });
-        }
+
 
         user.setRoles(roles);
         userRepository.save(user);

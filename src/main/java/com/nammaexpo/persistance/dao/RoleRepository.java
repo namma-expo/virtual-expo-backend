@@ -1,6 +1,5 @@
 package com.nammaexpo.persistance.dao;
 
-import com.nammaexpo.persistance.model.EnumRole;
 import com.nammaexpo.persistance.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    Optional<Role> findByName(EnumRole name);
+    Optional<Role> findByName(String name);
 }
 
