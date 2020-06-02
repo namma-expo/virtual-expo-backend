@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class JwtUserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	private int id;
 
 	private String username;
 
@@ -25,7 +25,7 @@ public class JwtUserDetailsImpl implements UserDetails {
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public JwtUserDetailsImpl(Long id, String username, String email, String password,
+	public JwtUserDetailsImpl(int id, String username, String email, String password,
 							  Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
@@ -40,7 +40,7 @@ public class JwtUserDetailsImpl implements UserDetails {
 				.collect(Collectors.toList());
 
 		return new JwtUserDetailsImpl(
-				user.getId(), 
+				user.getUser_id(),
 				user.getUsername(), 
 				user.getEmail(),
 				user.getPassword(), 
@@ -52,7 +52,7 @@ public class JwtUserDetailsImpl implements UserDetails {
 		return authorities;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 

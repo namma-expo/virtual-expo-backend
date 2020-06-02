@@ -1,3 +1,3 @@
-server:
-  port: 8080
-  context-path: /vexpo
+#server:
+#  port: 8080
+#  context-path: /vexpo

@@ -1,10 +1,14 @@
 package com.nammaexpo.payload.request;
 
+import com.nammaexpo.persistance.model.Role;
+
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.*;
 
-public class SignupRequest {
+public class
+SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;
@@ -14,14 +18,8 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private Set<String> role;
+    private Set<Role> role;
 
-    @NotBlank
-    @Size(min = 6, max = 40)
-    private String password;
-
-    @NotBlank
-    @Size(min = 10, max = 12)
     private String contactNumber;
 
     public String getContactNumber() {
@@ -31,6 +29,10 @@ public class SignupRequest {
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
+
+    @NotBlank
+    @Size(min = 6, max = 40)
+    private String password;
 
     public String getUsername() {
         return username;
@@ -56,11 +58,11 @@ public class SignupRequest {
         this.password = password;
     }
 
-    public Set<String> getRole() {
+    public Set<Role> getRole() {
         return this.role;
     }
 
-    public void setRole(Set<String> role) {
+    public void setRole(Set<Role> role) {
         this.role = role;
     }
 }

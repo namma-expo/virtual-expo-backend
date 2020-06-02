@@ -4,63 +4,49 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Entity
-@Table(	name = "user",
-        uniqueConstraints = {
+@Table(uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank
-    @Size(max = 20)
+    @GeneratedValue
+    private int user_id;
     private String username;
-
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    private String email;
-
-    @NotBlank
-    @Size(max = 120)
     private String password;
-
-    @NotBlank
-    @Size(max=12)
-    private String contactNumber;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private String email;
+    private String ContactNumber;
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
+    public String getContactNumber() {
+        return ContactNumber;
     }
 
-    public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 120) String password, @NotBlank @Size(max = 12) String contactNumber) {
+    public void setContactNumber(String contactNumber) {
+        ContactNumber = contactNumber;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public User(){}
+
+    public User(String username, String password, String email, String contactNumber, Set<Role> roles) {
         this.username = username;
-        this.email = email;
         this.password = password;
-        this.contactNumber = contactNumber;
+        this.email = email;
+        ContactNumber = contactNumber;
+        this.roles = roles;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public String getUsername() {
@@ -71,14 +57,6 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -87,12 +65,12 @@ public class User {
         this.password = password;
     }
 
-    public String getContactNumer() {
-        return contactNumber;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContactNumer(String contactNumer) {
-        this.contactNumber = contactNumer;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Set<Role> getRoles() {
