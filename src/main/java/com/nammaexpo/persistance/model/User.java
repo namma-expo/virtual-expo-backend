@@ -17,18 +17,18 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String ContactNumber;
+    private String contactNumber;
     //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public String getContactNumber() {
-        return ContactNumber;
+        return contactNumber;
     }
 
     public void setContactNumber(String contactNumber) {
-        ContactNumber = contactNumber;
+        this.contactNumber = contactNumber;
     }
 
     public int getUser_id() {
@@ -41,7 +41,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        ContactNumber = contactNumber;
+        this.contactNumber = contactNumber;
         this.roles = roles;
     }
 
