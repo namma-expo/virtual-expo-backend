@@ -14,11 +14,11 @@ or
     java -jar virtual-expo-0.0.1-SNAPSHOT.jar --spring.datasource.url=jdbc:mysql://localhost:3306/virtualexpodb --spring.datasource.username=root --spring.datasource.password=password
     
     
-Docker Image:
-=============
+### Docker Image :
+
 created the first version "Docker-image" of our project
 
-### docker commands:
+#### docker commands:
 
 1. docker pull basavesh1308/virtual-expo-app
 
