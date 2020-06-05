@@ -25,6 +25,7 @@ created the first version "Docker-image" of our project
 2. docker run -d -p 8080:8080 <image-ID>
  
 3. to see running containers
-docker ps -a
+
+   docker ps -a
     
 
