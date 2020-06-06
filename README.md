@@ -27,5 +27,8 @@ created the first version "Docker-image" of our project
 3. to see running containers
 
    docker ps -a
+   
+  #### screen shots of working image for reference
+   go and check in images folder in the root dir.
     
 
