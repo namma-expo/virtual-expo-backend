@@ -28,7 +28,9 @@ created the first version "Docker-image" of our project
 
    docker ps -a
    
-  #### screen shots of working image for reference
-   go and check in images folder in the root dir.
-    
+  ### screen shots of working image for reference
+  
+  
+<img src="images/expo_app_docker_container.PNG">
 
+<img src="images/MYSQL_docker_container.PNG">
