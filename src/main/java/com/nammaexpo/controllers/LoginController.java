@@ -4,54 +4,64 @@ import com.nammaexpo.payload.request.LoginRequest;
 import com.nammaexpo.payload.response.JwtResponse;
 import com.nammaexpo.security.JwtTokenUtil;
 import com.nammaexpo.services.JwtUserDetailsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-//@CrossOrigin(origins = "*", maxAge = 3600)
+@Slf4j
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-//@RequestMapping("/api/auth")
 public class LoginController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+  private final AuthenticationManager authenticationManager;
 
-    @Autowired(required = true)
-    private AuthenticationManager authenticationManager;
+  private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+  private final JwtUserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtUserDetailsService userDetailsService;
+  @Autowired
+  public LoginController(
+      AuthenticationManager authenticationManager,
+      JwtTokenUtil jwtTokenUtil,
+      JwtUserDetailsService userDetailsService) {
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authenticationRequest) throws Exception {
-        LOGGER.info("Login Controller has been invoked");
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenUtil = jwtTokenUtil;
+    this.userDetailsService = userDetailsService;
+  }
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-            );
-        }
-        catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
-        }
+  @PostMapping(value = "/authenticate")
+  public ResponseEntity<JwtResponse> createAuthenticationToken(
+      @RequestBody LoginRequest authenticationRequest) throws Exception {
 
+    log.info("Login Controller has been invoked");
 
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new JwtResponse(jwt));
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(),
+              authenticationRequest.getPassword())
+      );
+    } catch (BadCredentialsException e) {
+      throw new Exception("Incorrect username or password", e);
     }
+
+    final UserDetails userDetails = userDetailsService
+        .loadUserByUsername(authenticationRequest.getUserName());
+
+    final String jwt = jwtTokenUtil.generateToken(userDetails);
+
+    return ResponseEntity.ok(JwtResponse.builder()
+        .token(jwt)
+        .build());
+  }
 
     /*private void authenticate(String username, String password) throws Exception {
         try {

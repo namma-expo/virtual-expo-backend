@@ -34,18 +34,18 @@ public class JwtUserDetailsImpl implements UserDetails {
 		this.authorities = authorities;
 	}
 
-	public static JwtUserDetailsImpl build(User user) {
-		List<GrantedAuthority> authorities = user.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.toString()))
-				.collect(Collectors.toList());
-
-		return new JwtUserDetailsImpl(
-				user.getUser_id(),
-				user.getUsername(), 
-				user.getEmail(),
-				user.getPassword(), 
-				authorities);
-	}
+//	public static JwtUserDetailsImpl build(User user) {
+//		List<GrantedAuthority> authorities = user.getRoles().stream()
+//				.map(role -> new SimpleGrantedAuthority(role.toString()))
+//				.collect(Collectors.toList());
+//
+//		return new JwtUserDetailsImpl(
+//				user.getUser_id(),
+//				user.getUsername(),
+//				user.getEmail(),
+//				user.getPassword(),
+//				authorities);
+//	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -18,11 +18,11 @@ public class JwtUserDetailsService implements UserDetailsService {
     UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        com.nammaexpo.persistance.model.User user = userRepository.findByUsername(username);
+        com.nammaexpo.persistance.model.User user = userRepository.findByUserName(userName);
                 //.orElseThrow(() -> new UsernameNotFoundException(VexpoConstants.ErrorMessage.USER_NOT_FOUND));
-        return new User(user.getUsername(), user.getPassword(),
+        return new User(user.getUserName(), user.getPassword(),
                 new ArrayList<>());
     }
 }
