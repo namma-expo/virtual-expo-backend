@@ -25,7 +25,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(uniqueConstraints = {
-    @UniqueConstraint(columnNames = "user_name"),
+    @UniqueConstraint(columnNames = "identity"),
     @UniqueConstraint(columnNames = "email")
 })
 public class User {
@@ -35,12 +35,10 @@ public class User {
   private int userId;
 
   @Column(
-      name = "user_name",
-      unique = true,
-      nullable = false,
-      updatable = false
+      name = "name",
+      nullable = false
   )
-  private String userName;
+  private String name;
 
   @Column(
       name = "password",
@@ -56,9 +54,12 @@ public class User {
   private String email;
 
   @Column(
-      name = "contact_number"
+      name = "identity",
+      unique = true,
+      nullable = false,
+      updatable = false
   )
-  private String contactNumber;
+  private String identity;
 
   @Column(
       name = "created_at",
@@ -90,12 +91,12 @@ public class User {
   private Role role;
 
   @Builder
-  public User(String userName, String password, String email, String contactNumber, Role role) {
+  public User(String name, String password, String email, String identity, Role role) {
 
-    this.userName = userName;
+    this.name = name;
     this.password = password;
     this.email = email;
-    this.contactNumber = contactNumber;
+    this.identity = identity;
     this.role = role;
   }
 }
