@@ -28,7 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     @UniqueConstraint(columnNames = "identity"),
     @UniqueConstraint(columnNames = "email")
 })
-public class User {
+public class UserEntity {
 
   @Id
   @GeneratedValue
@@ -91,7 +91,7 @@ public class User {
   private Role role;
 
   @Builder
-  public User(String name, String password, String email, String identity, Role role) {
+  public UserEntity(String name, String password, String email, String identity, Role role) {
 
     this.name = name;
     this.password = password;

@@ -9,15 +9,10 @@ Header
 Input
 
     {
-	    "username":"name of the user",
-	    "password":"password for the user",
+	    "name":"name of the userEntity",
+	    "password":"password for the userEntity",
 	    "email":"email id",
-	    "contactNumber":"phone num",
-	    "role":[
-                {
-                    "role":"EXHIBITOR"
-                }
-		]
+	    "role": "role"
 	}
 Response
 
@@ -35,8 +30,8 @@ Header
 Input
 
     {
-	    "username":"name of the user",
-	    "password":"user password"
+	    "username":"name of the userEntity",
+	    "password":"userEntity password"
 	}
 Response
 
