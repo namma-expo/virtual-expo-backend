@@ -25,7 +25,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(uniqueConstraints = {
-    @UniqueConstraint(columnNames = "identity"),
     @UniqueConstraint(columnNames = "email")
 })
 public class UserEntity {

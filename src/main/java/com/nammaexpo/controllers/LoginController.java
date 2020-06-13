@@ -1,7 +1,8 @@
 package com.nammaexpo.controllers;
 
+import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.expection.ExpoException.ErrorCode;
+
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.payload.request.LoginRequest;
 import com.nammaexpo.payload.response.JwtResponse;
@@ -16,10 +17,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -41,7 +39,7 @@ public class LoginController {
   @Autowired
   private PasswordEncoder encoder;
 
-  @RequestMapping("/authenticate")
+  @PostMapping("/authenticate")
   public ResponseEntity<JwtResponse> authenticateUser(
       @RequestBody LoginRequest loginRequest) throws Exception {
 
