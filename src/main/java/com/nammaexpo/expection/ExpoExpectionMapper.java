@@ -12,6 +12,7 @@ public class ExpoExpectionMapper {
 
   @ExceptionHandler(value = {ExpoException.class})
   public ResponseEntity<ErrorResponse> toResponseEntity(ExpoException e) {
+    System.out.println("I am here");
     log.error("ERROR:: {} {}", e.getErrorCodeName(), e.getContext(), e);
 
     return new ResponseEntity<>(ErrorResponse.builder()

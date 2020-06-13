@@ -1,9 +1,9 @@
-package com.nammaexpo.security;
+package com.nammaexpo.configuration;
 
-import java.util.Arrays;
+import com.nammaexpo.filters.JwtRequestFilter;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,63 +12,72 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+  private static final String[] ALLOWED_PATTERNS = {
+      "/authenticate",
+      "/signup",
+      "/v2/api-docs/**",
+      "/swagger-ui.html",
+      "/swagger-resources/**",
+      "/webjars/**"
+  };
 
   @Autowired
-  private UserDetailsService myUserDetailsService;
+  private UserDetailsService userDetailsService;
+
   @Autowired
   private JwtRequestFilter jwtRequestFilter;
 
-  @Autowired
-  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(myUserDetailsService);
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(userDetailsService);
   }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return NoOpPasswordEncoder.getInstance();
+    return new BCryptPasswordEncoder();
   }
 
   @Override
   @Bean
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
+  protected AuthenticationManager authenticationManager() throws Exception {
+    return super.authenticationManager();
   }
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.csrf().disable()
-        .authorizeRequests().antMatchers(
-        "/authenticate",
-        "/signup",
-        "/v2/api-docs/**",
-        "/swagger-ui.html",
-        "/swagger-resources/**",
-        "/webjars/**")
-        .permitAll().
-        anyRequest().authenticated().and().
-        exceptionHandling().and().sessionManagement()
+    httpSecurity
+        .csrf().disable()
+        .authorizeRequests()
+        .antMatchers(ALLOWED_PATTERNS)
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .exceptionHandling()
+        .and()
+        .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
+    httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("*"));
-    configuration.setAllowedMethods(Arrays.asList("*"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setAllowedOrigins(Collections.singletonList("*"));
+    configuration.setAllowedMethods(Collections.singletonList("*"));
+    configuration.setAllowedHeaders(Collections.singletonList("*"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
