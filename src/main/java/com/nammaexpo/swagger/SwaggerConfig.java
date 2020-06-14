@@ -25,6 +25,7 @@ public class SwaggerConfig {
   @Bean
   public Docket productApi() {
     return new Docket(DocumentationType.SWAGGER_2)
+        .useDefaultResponseMessages(false)
         .select()
         .apis(RequestHandlerSelectors.basePackage("com.nammaexpo"))
         .paths(regex("/.*"))
@@ -34,7 +35,7 @@ public class SwaggerConfig {
 
   private ApiInfo metaData() {
     return new ApiInfo(
-        "REST API",
+        "Virtual Expo API",
         "virtual expo platform APIs",
         "1.0",
         "Terms of service",
