@@ -46,13 +46,13 @@ public class ExhibitionSubscriptionEntity {
       name = "exhibition_id",
       nullable = false
   )
-  private String exhibitionId;
+  private int exhibitionId;
 
   @Column(
       name = "created_by",
       nullable = false
   )
-  private String createdBy;
+  private int createdBy;
 
   @Column(
       name = "created_at",

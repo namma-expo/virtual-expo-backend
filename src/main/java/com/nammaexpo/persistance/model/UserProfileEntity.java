@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,10 +20,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "user_profiles",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "user_id")
-})
+    name = "user_profiles"
+)
 public class UserProfileEntity {
   @Id
   @GeneratedValue
@@ -32,9 +29,10 @@ public class UserProfileEntity {
 
   @Column(
       name = "user_id",
-      nullable = false
+      nullable = false,
+      unique = true
   )
-  private String userId;
+  private int userId;
 
   @Column(
       name = "company"

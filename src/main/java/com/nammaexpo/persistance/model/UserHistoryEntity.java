@@ -34,7 +34,7 @@ public class UserHistoryEntity {
       nullable = false,
       updatable = false
   )
-  private String userId;
+  private int userId;
 
   @Column(
       name = "action",
@@ -49,7 +49,7 @@ public class UserHistoryEntity {
       nullable = false,
       updatable = false
   )
-  private String exhibitionId;
+  private int exhibitionId;
 
   @Column(
       name = "created_at",

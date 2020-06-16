@@ -43,7 +43,8 @@ public class ExhibitionContactEntity {
   private String email;
 
   @Column(
-      name = "notes"
+      name = "notes",
+      columnDefinition = "text"
   )
   private String notes;
 
@@ -61,13 +62,13 @@ public class ExhibitionContactEntity {
       name = "exhibition_id",
       nullable = false
   )
-  private String exhibitionId;
+  private int exhibitionId;
 
   @Column(
       name = "created_by",
       nullable = false
   )
-  private String createdBy;
+  private int createdBy;
 
   @Column(
       name = "created_at",

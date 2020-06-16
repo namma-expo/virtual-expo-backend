@@ -33,7 +33,7 @@ public class PageEntity {
       updatable = false,
       unique = true
   )
-  private String exhibitionId;
+  private int exhibitionId;
 
   @Column(
       name = "created_at",
@@ -66,5 +66,5 @@ public class PageEntity {
       name = "created_by",
       nullable = false
   )
-  private String createdBy;
+  private int createdBy;
 }

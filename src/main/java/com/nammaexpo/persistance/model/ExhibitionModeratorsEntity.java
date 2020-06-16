@@ -36,21 +36,21 @@ public class ExhibitionModeratorsEntity {
       name = "user_id",
       nullable = false
   )
-  private String userId;
+  private int userId;
 
   @Column(
       name = "is_active",
-      nullable = false
+      nullable = false,
+      columnDefinition = "boolean"
   )
-  @Enumerated(EnumType.STRING)
-  private UserAction action;
+  private boolean isActive;
 
   @Column(
       name = "exhibition_id",
       nullable = false,
       updatable = false
   )
-  private String exhibitionId;
+  private int exhibitionId;
 
   @Column(
       name = "created_at",
@@ -67,6 +67,6 @@ public class ExhibitionModeratorsEntity {
       name = "created_by",
       nullable = false
   )
-  private String createdBy;
+  private int createdBy;
 
 }

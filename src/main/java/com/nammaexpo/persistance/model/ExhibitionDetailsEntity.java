@@ -42,14 +42,16 @@ public class ExhibitionDetailsEntity {
   private String logo;
 
   @Column(
-      name = "exhibitor_id"
+      name = "exhibitor_id",
+      nullable = false
   )
-  private String exhibitorId;
+  private int exhibitorId;
 
   @Column(
       name = "identity",
       unique = true,
-      updatable = false
+      updatable = false,
+      nullable = false
   )
   private String identity;
 
