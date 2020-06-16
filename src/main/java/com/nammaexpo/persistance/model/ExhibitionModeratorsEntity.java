@@ -1,7 +1,7 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
+import com.nammaexpo.models.enums.UserAction;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,63 +13,44 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users",
+    name = "exhibition_moderators",
     uniqueConstraints = {
-    @UniqueConstraint(columnNames = "identity"),
-    @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = {"user_id", "exhibition_id"}),
 })
-public class UserEntity {
-
+public class ExhibitionModeratorsEntity {
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
+      name = "user_id",
       nullable = false
   )
-  private String name;
+  private String userId;
 
   @Column(
-      name = "email",
-      unique = true,
+      name = "is_active",
       nullable = false
   )
-  private String email;
+  @Enumerated(EnumType.STRING)
+  private UserAction action;
 
   @Column(
-      name = "password",
-      nullable = false
-  )
-  private String password;
-
-  @Column(
-      name = "identity",
-      unique = true,
+      name = "exhibition_id",
       nullable = false,
       updatable = false
   )
-  private String identity;
-
-  @Column(
-      name = "role",
-      nullable = false,
-      length = 20
-  )
-  @Enumerated(EnumType.STRING)
-  private Role role;
+  private String exhibitionId;
 
   @Column(
       name = "created_at",
@@ -83,22 +64,9 @@ public class UserEntity {
   private Date createdAt;
 
   @Column(
-      name = "updated_at",
-      nullable = false,
-      columnDefinition = "DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)"
+      name = "created_by",
+      nullable = false
   )
-  @UpdateTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
-  private Date updatedAt;
+  private String createdBy;
 
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
-
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
 }

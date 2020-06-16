@@ -1,19 +1,15 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,51 +21,37 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users",
+    name = "exhibition_details",
     uniqueConstraints = {
-    @UniqueConstraint(columnNames = "identity"),
-    @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "identity"),
 })
-public class UserEntity {
+public class ExhibitionDetailsEntity {
 
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
-      nullable = false
+      name = "name"
   )
   private String name;
 
   @Column(
-      name = "email",
-      unique = true,
-      nullable = false
+      name = "logo"
   )
-  private String email;
+  private String logo;
 
   @Column(
-      name = "password",
-      nullable = false
+      name = "exhibitor_id"
   )
-  private String password;
+  private String exhibitorId;
 
   @Column(
       name = "identity",
       unique = true,
-      nullable = false,
       updatable = false
   )
   private String identity;
-
-  @Column(
-      name = "role",
-      nullable = false,
-      length = 20
-  )
-  @Enumerated(EnumType.STRING)
-  private Role role;
 
   @Column(
       name = "created_at",
@@ -92,13 +74,20 @@ public class UserEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
 
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
+  @Column(
+      name = "published_at",
+      columnDefinition = "DATETIME(3) DEFAULT NULL"
+  )
+  @Temporal(TemporalType.TIMESTAMP)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
+  private Date publishedAt;
 
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
+  @Column(
+      name = "approved_at",
+      columnDefinition = "DATETIME(3) DEFAULT NULL"
+  )
+  @Temporal(TemporalType.TIMESTAMP)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
+  private Date approvedAt;
+
 }

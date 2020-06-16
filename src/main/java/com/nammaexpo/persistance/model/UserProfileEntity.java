@@ -1,19 +1,15 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,51 +21,45 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users",
+    name = "user_profiles",
     uniqueConstraints = {
-    @UniqueConstraint(columnNames = "identity"),
-    @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "user_id")
 })
-public class UserEntity {
-
+public class UserProfileEntity {
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
+      name = "user_id",
       nullable = false
   )
-  private String name;
+  private String userId;
 
   @Column(
-      name = "email",
-      unique = true,
-      nullable = false
+      name = "company"
   )
-  private String email;
+  private String company;
 
   @Column(
-      name = "password",
-      nullable = false
+      name = "phone_number"
   )
-  private String password;
+  private String phoneNumber;
 
   @Column(
-      name = "identity",
-      unique = true,
-      nullable = false,
-      updatable = false
+      name = "country"
   )
-  private String identity;
+  private String country;
 
   @Column(
-      name = "role",
-      nullable = false,
-      length = 20
+      name = "state"
   )
-  @Enumerated(EnumType.STRING)
-  private Role role;
+  private String state;
+
+  @Column(
+      name = "city"
+  )
+  private String city;
 
   @Column(
       name = "created_at",
@@ -91,14 +81,4 @@ public class UserEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
-
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
-
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
 }
