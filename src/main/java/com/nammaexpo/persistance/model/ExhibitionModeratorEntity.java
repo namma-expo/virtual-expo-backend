@@ -27,7 +27,7 @@ import org.hibernate.annotations.CreationTimestamp;
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "exhibition_id"}),
 })
-public class ExhibitionModeratorsEntity {
+public class ExhibitionModeratorEntity {
   @Id
   @GeneratedValue
   private int id;
@@ -41,7 +41,7 @@ public class ExhibitionModeratorsEntity {
   @Column(
       name = "is_active",
       nullable = false,
-      columnDefinition = "boolean"
+      columnDefinition = "BOOLEAN DEFAULT 1"
   )
   private boolean isActive;
 

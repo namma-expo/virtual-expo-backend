@@ -1,6 +1,7 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,10 +31,16 @@ public class PageEntity {
   @Column(
       name = "exhibition_id",
       nullable = false,
-      updatable = false,
-      unique = true
+      updatable = false
   )
   private int exhibitionId;
+
+  @Column(
+      name = "is_active",
+      nullable = false,
+      columnDefinition = "BOOLEAN DEFAULT 0"
+  )
+  private boolean isActive;
 
   @Column(
       name = "created_at",
@@ -57,7 +64,7 @@ public class PageEntity {
   private Date updatedAt;
 
   @Column(
-      columnDefinition = "blob",
+      columnDefinition = "BLOB",
       name = "content"
   )
   private byte[] content;

@@ -44,9 +44,9 @@ public class UserHistoryEntity {
   @Enumerated(EnumType.STRING)
   private UserAction action;
 
+  // NOTE: Nullable is true because of we might store other user actions in the future
   @Column(
       name = "exhibition_id",
-      nullable = false,
       updatable = false
   )
   private int exhibitionId;

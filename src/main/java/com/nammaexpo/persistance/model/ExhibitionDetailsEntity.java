@@ -43,7 +43,8 @@ public class ExhibitionDetailsEntity {
 
   @Column(
       name = "exhibitor_id",
-      nullable = false
+      nullable = false,
+      unique = true
   )
   private int exhibitorId;
 

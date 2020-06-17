@@ -28,7 +28,8 @@ public class ExhibitionContactEntity {
   private int id;
 
   @Column(
-      name = "name"
+      name = "name",
+      nullable = false
   )
   private String name;
 
@@ -44,7 +45,7 @@ public class ExhibitionContactEntity {
 
   @Column(
       name = "notes",
-      columnDefinition = "text"
+      columnDefinition = "TEXT"
   )
   private String notes;
 

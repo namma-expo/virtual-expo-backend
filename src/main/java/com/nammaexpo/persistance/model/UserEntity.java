@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,14 +55,15 @@ public class UserEntity {
       name = "identity",
       unique = true,
       nullable = false,
-      updatable = false
+      updatable = false,
+      length = 36
   )
   private String identity;
 
   @Column(
       name = "role",
       nullable = false,
-      length = 20
+      length = 25
   )
   @Enumerated(EnumType.STRING)
   private Role role;
