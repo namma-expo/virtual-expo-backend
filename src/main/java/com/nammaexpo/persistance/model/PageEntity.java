@@ -1,18 +1,15 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,49 +21,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users"
+    name = "pages"
 )
-public class UserEntity {
-
+public class PageEntity {
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
-      nullable = false
-  )
-  private String name;
-
-  @Column(
-      name = "email",
-      unique = true,
-      nullable = false
-  )
-  private String email;
-
-  @Column(
-      name = "password",
-      nullable = false
-  )
-  private String password;
-
-  @Column(
-      name = "identity",
-      unique = true,
+      name = "exhibition_id",
       nullable = false,
-      updatable = false,
-      length = 36
+      updatable = false
   )
-  private String identity;
+  private int exhibitionId;
 
   @Column(
-      name = "role",
+      name = "is_active",
       nullable = false,
-      length = 25
+      columnDefinition = "BOOLEAN DEFAULT 0"
   )
-  @Enumerated(EnumType.STRING)
-  private Role role;
+  private boolean isActive;
 
   @Column(
       name = "created_at",
@@ -89,13 +63,15 @@ public class UserEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
 
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
+  @Column(
+      columnDefinition = "BLOB",
+      name = "content"
+  )
+  private byte[] content;
 
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
+  @Column(
+      name = "created_by",
+      nullable = false
+  )
+  private int createdBy;
 }
