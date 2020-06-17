@@ -109,7 +109,8 @@ public class Contacts {
 
     @Column(
             name = "createdBy",
-            nullable = false
+            nullable = false,
+            columnDefinition = "VARCHAR(40) DEFAULT ''"
     )
     private String createdBy;
 
