@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -79,4 +80,15 @@ public class UserProfileEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
+
+
+  @Builder
+  public UserProfileEntity(int userId, String company, String phoneNumber, String country, String state, String city) {
+    this.userId = userId;
+    this.company = company;
+    this.phoneNumber = phoneNumber;
+    this.country = country;
+    this.state = state;
+    this.city = city;
+  }
 }
