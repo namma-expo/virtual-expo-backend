@@ -17,7 +17,11 @@ public enum ErrorCode {
     REQUIRED_PARAMETER_NOT_FOUND(HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST),
     UPDATE_CONTACT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_METHOD_EXCEPTION(HttpStatus.METHOD_NOT_ALLOWED);
+    INVALID_METHOD_EXCEPTION(HttpStatus.METHOD_NOT_ALLOWED),
+
+
+    //contacts apis specific erros
+    CONTACTS_NOT_FOUND(HttpStatus.NO_CONTENT);
 
     @Getter
     HttpStatus responseCode;

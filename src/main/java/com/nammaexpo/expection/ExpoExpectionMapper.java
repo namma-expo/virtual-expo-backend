@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,7 @@ public class ExpoExpectionMapper {
             .build(), errorCode.getResponseCode());
   }
 
-  @ExceptionHandler(value = {MissingServletRequestParameterException.class})
+  @ExceptionHandler(value = {MissingServletRequestParameterException.class, MissingRequestHeaderException.class})
   public ResponseEntity<ErrorResponse> missingParameter(Exception exception) {
     log.error("ERROR:: {}", exception.getMessage(), exception);
 

@@ -5,16 +5,18 @@ import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.request.ContactsDTO;
 import com.nammaexpo.payload.response.MessageResponse;
-import com.nammaexpo.persistance.dao.ContactsRepo;
-import com.nammaexpo.persistance.model.Contacts;
+import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
+import com.nammaexpo.persistance.model.ExhibitionContactEntity;
 import com.nammaexpo.services.ContactsService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,13 +31,13 @@ public class ContactsController {
     ContactsService contactsService;
 
     @Autowired
-    ContactsRepo contactsRepo;
+    ExhibitionContactRepository contactsRepo;
 
     @PostMapping("/newContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> addContact(@RequestBody @Valid ContactsDTO contact) {
 
-        Optional<Contacts> optionalContacts = contactsRepo.findByUserEmail(contact.getUserEmail());
+        Optional<ExhibitionContactEntity> optionalContacts = contactsRepo.findByEmail(contact.getEmail());
 
         if (optionalContacts.isPresent()) {
             throw ExpoException.error(ErrorCode.EMAIL_IN_USE);
@@ -54,63 +56,50 @@ public class ContactsController {
 
     @GetMapping("/allContacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<Object> getAllContacts() {
-
-        List<Contacts> contactsList = contactsRepo.findAll();
-        if (contactsList.size() > 0)
-            return new ResponseEntity<>(contactsList, HttpStatus.OK);
-
-        return new ResponseEntity<>(MessageResponse
-                .builder()
-                .messageCode(MessageCode.USER_NOT_FOUND)
-                .message("Contacts list is empty"), HttpStatus.NO_CONTENT);
+    public ResponseEntity<List<ContactsDTO>> getAllContacts() {
+        return contactsService.getAllContacts();
     }
 
     @GetMapping("/getContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<Object> getContact(@RequestParam String emailId) {
-
-        Optional<Contacts> contact = contactsRepo.findByUserEmail(emailId);
-        if (contact.isPresent()) {
-            return new ResponseEntity<>(contact, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(MessageResponse
-                .builder()
-                .messageCode(MessageCode.USER_NOT_FOUND)
-                .message("Email id is not registered")
-                .build(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ContactsDTO> getContact(@RequestHeader String email) {
+       return contactsService.getContact(email);
     }
 
     @DeleteMapping("/deleteContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<MessageResponse> deleteContact(@RequestParam String emailId) {
+    public ResponseEntity<MessageResponse> deleteContact(@RequestHeader String email) {
 
-        Optional<Contacts> contacts = contactsRepo.findByUserEmail(emailId);
-        if (contacts.isPresent()) {
-           return contactsService.deleteContact(contacts.get());
+        Optional<ExhibitionContactEntity> contact = contactsRepo.findByEmail(email);
+        if (contact.isPresent()) {
+            contactsRepo.delete(contact.get());
+            log.debug("Contact deleted");
+            return new ResponseEntity<>(MessageResponse
+                    .builder()
+                    .messageCode(MessageCode.CONTACT_DELETE_SUCCESS)
+                    .message("Contact deleted successfully").build(), HttpStatus.ACCEPTED);
+        }
+        throw ExpoException.error(ErrorCode.CONTACTS_NOT_FOUND);
+    }
+
+    @PutMapping("/updateContact")
+    @PreAuthorize("hasAuthority('EXHIBITOR')")
+    public ResponseEntity<MessageResponse> updateContact(@RequestBody @Valid ContactsDTO contact, @RequestHeader String email) {
+
+        Optional<ExhibitionContactEntity> visitorContact = contactsRepo.findByEmail(email);
+        String updatedBy = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!visitorContact.isPresent()) {
+            throw ExpoException.error(ErrorCode.EMAIL_NOT_FOUND);
+        }
+        if (visitorContact.isPresent() && updatedBy != null) {
+            return contactsService.updateContact(visitorContact.get(), contact, updatedBy);
         }
 
         return new ResponseEntity<>(MessageResponse
                 .builder()
-                .messageCode(MessageCode.USER_NOT_FOUND)
-                .message("Email id is not found")
-                .build(), HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/updateContact")
-    public ResponseEntity<MessageResponse> updateContact(@RequestBody @Valid Contacts contacts, @RequestParam String emailId) {
-
-        Optional<Contacts> optionalContacts = contactsRepo.findByUserEmail(emailId);
-        String updatedBy = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (!optionalContacts.isPresent()) {
-            throw ExpoException.error(ErrorCode.EMAIL_NOT_FOUND);
-        }
-        if (optionalContacts.isPresent() && updatedBy != null) {
-            return contactsService.updateContact(contacts, updatedBy);
-        }
-
-        throw ExpoException.error(ErrorCode.UPDATE_CONTACT_FAILED);
+                .messageCode(MessageCode.UPDATE_CONTACT_FAILED)
+                .message("Couldn't update contact")
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
