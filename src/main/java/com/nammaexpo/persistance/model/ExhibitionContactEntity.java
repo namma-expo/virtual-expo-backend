@@ -1,18 +1,14 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,10 +20,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users"
+    name = "exhibition_contacts"
 )
-public class UserEntity {
-
+public class ExhibitionContactEntity {
   @Id
   @GeneratedValue
   private int id;
@@ -39,34 +34,42 @@ public class UserEntity {
   private String name;
 
   @Column(
-      name = "email",
-      unique = true,
-      nullable = false
+      name = "phone_number"
+  )
+  private String phoneNumber;
+
+  @Column(
+      name = "email"
   )
   private String email;
 
   @Column(
-      name = "password",
+      name = "notes",
+      columnDefinition = "TEXT"
+  )
+  private String notes;
+
+  @Column(
+      name = "company"
+  )
+  private String company;
+
+  @Column(
+      name = "occupation"
+  )
+  private String occupation;
+
+  @Column(
+      name = "exhibition_id",
       nullable = false
   )
-  private String password;
+  private int exhibitionId;
 
   @Column(
-      name = "identity",
-      unique = true,
-      nullable = false,
-      updatable = false,
-      length = 36
+      name = "created_by",
+      nullable = false
   )
-  private String identity;
-
-  @Column(
-      name = "role",
-      nullable = false,
-      length = 25
-  )
-  @Enumerated(EnumType.STRING)
-  private Role role;
+  private int createdBy;
 
   @Column(
       name = "created_at",
@@ -88,14 +91,4 @@ public class UserEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
-
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
-
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
 }

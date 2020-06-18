@@ -1,12 +1,9 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,49 +21,44 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users"
+    name = "user_profiles"
 )
-public class UserEntity {
-
+public class UserProfileEntity {
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
-      nullable = false
-  )
-  private String name;
-
-  @Column(
-      name = "email",
-      unique = true,
-      nullable = false
-  )
-  private String email;
-
-  @Column(
-      name = "password",
-      nullable = false
-  )
-  private String password;
-
-  @Column(
-      name = "identity",
-      unique = true,
+      name = "user_id",
       nullable = false,
-      updatable = false,
-      length = 36
+      unique = true
   )
-  private String identity;
+  private int userId;
 
   @Column(
-      name = "role",
-      nullable = false,
-      length = 25
+      name = "company"
   )
-  @Enumerated(EnumType.STRING)
-  private Role role;
+  private String company;
+
+  @Column(
+      name = "phone_number"
+  )
+  private String phoneNumber;
+
+  @Column(
+      name = "country"
+  )
+  private String country;
+
+  @Column(
+      name = "state"
+  )
+  private String state;
+
+  @Column(
+      name = "city"
+  )
+  private String city;
 
   @Column(
       name = "created_at",
@@ -89,13 +81,14 @@ public class UserEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
 
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
 
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
+  @Builder
+  public UserProfileEntity(int userId, String company, String phoneNumber, String country, String state, String city) {
+    this.userId = userId;
+    this.company = company;
+    this.phoneNumber = phoneNumber;
+    this.country = country;
+    this.state = state;
+    this.city = city;
   }
 }

@@ -1,7 +1,7 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nammaexpo.models.enums.Role;
+import com.nammaexpo.models.enums.SubscriptionPlan;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import lombok.Builder;
+import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,49 +24,35 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "users"
+    name = "exhibition_subscription",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"plan_id", "exhibition_id"})
+    }
 )
-public class UserEntity {
-
+public class ExhibitionSubscriptionEntity {
   @Id
   @GeneratedValue
   private int id;
 
   @Column(
-      name = "name",
+      name = "plan_id",
       nullable = false
-  )
-  private String name;
-
-  @Column(
-      name = "email",
-      unique = true,
-      nullable = false
-  )
-  private String email;
-
-  @Column(
-      name = "password",
-      nullable = false
-  )
-  private String password;
-
-  @Column(
-      name = "identity",
-      unique = true,
-      nullable = false,
-      updatable = false,
-      length = 36
-  )
-  private String identity;
-
-  @Column(
-      name = "role",
-      nullable = false,
-      length = 25
   )
   @Enumerated(EnumType.STRING)
-  private Role role;
+  private SubscriptionPlan planId;
+
+
+  @Column(
+      name = "exhibition_id",
+      nullable = false
+  )
+  private int exhibitionId;
+
+  @Column(
+      name = "created_by",
+      nullable = false
+  )
+  private int createdBy;
 
   @Column(
       name = "created_at",
@@ -89,13 +75,11 @@ public class UserEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
 
-  @Builder
-  public UserEntity(String name, String password, String email, String identity, Role role) {
-
-    this.name = name;
-    this.password = password;
-    this.email = email;
-    this.identity = identity;
-    this.role = role;
-  }
+  @Column(
+      name = "deleted_at",
+      columnDefinition = "DATETIME(3) DEFAULT NULL"
+  )
+  @Temporal(TemporalType.TIMESTAMP)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
+  private Date deletedAt;
 }
