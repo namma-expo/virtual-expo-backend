@@ -7,8 +7,10 @@ import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.payload.request.SignUpRequest;
 import com.nammaexpo.payload.response.JwtResponse;
 import com.nammaexpo.payload.response.MessageResponse;
+import com.nammaexpo.persistance.dao.UserProfileRepository;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.UserEntity;
+import com.nammaexpo.persistance.model.UserProfileEntity;
 import com.nammaexpo.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,17 +37,20 @@ public class RegistrationController {
 
   private final UserRepository userRepository;
 
+  private final UserProfileRepository userProfileRepository;
+
   private final PasswordEncoder encoder;
 
   private JwtUtils jwtUtils;
 
   @Autowired
   public RegistrationController(UserRepository userRepository,
-      PasswordEncoder encoder, JwtUtils jwtUtils) {
+      PasswordEncoder encoder, JwtUtils jwtUtils, UserProfileRepository userProfileRepository) {
 
     this.userRepository = userRepository;
     this.encoder = encoder;
     this.jwtUtils = jwtUtils;
+    this.userProfileRepository = userProfileRepository;
   }
 
   @ApiOperation(value = "Registration")
@@ -64,6 +70,15 @@ public class RegistrationController {
       throw ExpoException.error(ErrorCode.EMAIL_IN_USE);
     }
 
+    UserEntity userEntity = createUserData(signUpRequest);
+
+    final String jwt = jwtUtils.generateJwtToken(new ExpoUserDetails(userEntity));
+
+    return ResponseEntity.ok(new JwtResponse(jwt));
+  }
+
+  @Transactional
+  public UserEntity createUserData(SignUpRequest signUpRequest) {
     UserEntity userEntity = userRepository.save(UserEntity.builder()
         .name(signUpRequest.getName())
         .email(signUpRequest.getEmail())
@@ -72,8 +87,11 @@ public class RegistrationController {
         .role(signUpRequest.getRole())
         .build());
 
-    final String jwt = jwtUtils.generateJwtToken(new ExpoUserDetails(userEntity));
+    UserProfileEntity userProfileEntity = UserProfileEntity.builder()
+        .build();
 
-    return ResponseEntity.ok(new JwtResponse(jwt));
+    userProfileRepository.save(userProfileEntity);
+
+    return userEntity;
   }
 }
