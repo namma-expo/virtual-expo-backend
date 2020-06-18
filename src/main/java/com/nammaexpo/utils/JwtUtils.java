@@ -1,7 +1,7 @@
 package com.nammaexpo.utils;
 
+import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.expection.ExpoException.ErrorCode;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.models.JwtPayload;
 import io.jsonwebtoken.Claims;

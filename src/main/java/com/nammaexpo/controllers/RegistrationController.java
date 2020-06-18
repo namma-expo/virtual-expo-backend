@@ -1,7 +1,7 @@
 package com.nammaexpo.controllers;
 
+import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.expection.ExpoException.ErrorCode;
 import com.nammaexpo.models.ErrorResponse;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.payload.request.SignUpRequest;

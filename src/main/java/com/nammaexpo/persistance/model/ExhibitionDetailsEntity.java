@@ -93,4 +93,8 @@ public class ExhibitionDetailsEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date approvedAt;
 
+
+
+
+
 }
