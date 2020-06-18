@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,11 +36,6 @@ public class ExhibitionContactEntity {
   private String name;
 
   @Column(
-      name = "phone_number"
-  )
-  private String phoneNumber;
-
-  @Column(
       name = "email"
   )
   private String email;
@@ -58,6 +55,16 @@ public class ExhibitionContactEntity {
       name = "occupation"
   )
   private String occupation;
+
+  @Column(
+          name = "phone1"
+  )
+  private String phone1;
+
+  @Column(
+          name = "phone2"
+  )
+  private String phone2;
 
   @Column(
       name = "exhibition_id",
@@ -83,12 +90,32 @@ public class ExhibitionContactEntity {
   private Date createdAt;
 
   @Column(
+          name = "updated_by"
+  )
+  private int updatedBy;
+
+  @Column(
       name = "updated_at",
-      nullable = false,
       columnDefinition = "DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)"
   )
   @UpdateTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date updatedAt;
+
+  @Builder
+  public ExhibitionContactEntity(String name, String email,
+                                 String notes, String company, String occupation, String phone1,
+                                 String phone2, int exhibitionId, int createdBy, int updatedBy) {
+    this.name = name;
+    this.email = email;
+    this.notes = notes;
+    this.company = company;
+    this.occupation = occupation;
+    this.phone1 = phone1;
+    this.phone2 = phone2;
+    this.exhibitionId = exhibitionId;
+    this.createdBy = createdBy;
+    this.updatedBy = updatedBy;
+  }
 }
