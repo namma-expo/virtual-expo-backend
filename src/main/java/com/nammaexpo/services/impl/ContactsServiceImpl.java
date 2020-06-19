@@ -8,13 +8,11 @@ import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
 import com.nammaexpo.persistance.model.ExhibitionContactEntity;
 import com.nammaexpo.services.ContactsService;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -84,7 +82,7 @@ public class ContactsServiceImpl implements ContactsService {
 
             List<ContactsDTO> contactsDTOS = new ArrayList<>();
             for (ExhibitionContactEntity contactEntity :
-                   contactsList ) {
+                    contactsList) {
                 contactsDTOS.add(ContactsDTO.builder()
                         .email(contactEntity.getEmail())
                         .name(contactEntity.getName())

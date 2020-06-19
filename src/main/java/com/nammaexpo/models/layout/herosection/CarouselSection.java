@@ -1,10 +1,6 @@
 package com.nammaexpo.models.layout.herosection;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,7 +8,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class CarouselSection {
-  private String image;
-  private String heading;
-  private String description;
+    private String image;
+    private String heading;
+    private String description;
 }
