@@ -1,5 +1,6 @@
 package com.nammaexpo.payload.response;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,5 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtResponse {
+    @ApiModelProperty(notes = "jwt token")
     private String token;
 }

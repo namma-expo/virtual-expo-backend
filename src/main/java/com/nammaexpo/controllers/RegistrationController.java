@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "Registration Controller")
+@Api(value = "Registration Controller", description = "User registration APIs can be found here")
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -47,7 +47,8 @@ public class RegistrationController {
     this.jwtUtils = jwtUtils;
   }
 
-  @ApiOperation(value = "Registration")
+  @ApiOperation(value = "User registration", notes = "Both visitor and exhibitor can register through this API and " +
+          "on successful registration user will get the access token to login", response = JwtResponse.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "User Registration Successful", response = MessageResponse.class),
       @ApiResponse(code = 400, message = "User Registration Failed", response = ErrorResponse.class)
