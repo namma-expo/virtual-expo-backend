@@ -8,16 +8,14 @@ import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
 import com.nammaexpo.persistance.model.ExhibitionContactEntity;
 import com.nammaexpo.services.ContactsService;
-
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -101,7 +99,7 @@ public class ContactsController {
     @GetMapping("/getContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<ContactsDTO> getContact(@RequestHeader String email) {
-       return contactsService.getContact(email);
+        return contactsService.getContact(email);
     }
 
     @ApiOperation(value = "Delete single contact details",

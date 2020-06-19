@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JwtPayload {
-  private String email;
+    private String email;
 
-  private String identity;
+    private String identity;
 
-  private Role role;
+    private Role role;
 }
