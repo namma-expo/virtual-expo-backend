@@ -9,6 +9,7 @@ import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
 import com.nammaexpo.persistance.model.ExhibitionContactEntity;
 import com.nammaexpo.services.ContactsService;
 
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@Api(value = "contacts", description = "operations pertaining to vistor contact details")
 public class ContactsController {
 
     @Autowired
@@ -33,6 +35,19 @@ public class ContactsController {
     @Autowired
     ExhibitionContactRepository contactsRepo;
 
+    @ApiOperation(value = "Add new contact details",
+            notes = "Exhibitor can collect visitors contact details",
+            response = MessageResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, response = MessageResponse.class,
+                    message = "CREATE_CONTACT_SUCCESS"),
+            @ApiResponse(code = 400, response = ErrorCode.class,
+                    message = "EMAIL_IN_USE"),
+            @ApiResponse(code = 500, response = MessageResponse.class,
+                    message = "CONTACT_REGISTRATION_FAILED")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PostMapping("/newContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> addContact(@RequestBody @Valid ContactsDTO contact) {
@@ -54,18 +69,52 @@ public class ContactsController {
                 .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ApiOperation(value = "Get all contacts details",
+            notes = "Returns all the contacts that has access for this exhibitor",
+            response = ContactsDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, response = ContactsDTO.class, responseContainer = "List",
+                    message = "List of all contacts"),
+            @ApiResponse(code = 204, response = ErrorCode.class,
+                    message = "CONTACTS_NOT_FOUND")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping("/allContacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<List<ContactsDTO>> getAllContacts() {
         return contactsService.getAllContacts();
     }
 
+    @ApiOperation(value = "Get single contact details",
+            notes = "Returns the contact details of the visitor based on his email id",
+            response = ContactsDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, response = ContactsDTO.class,
+                    message = "Visitor contact details"),
+            @ApiResponse(code = 204, response = ErrorCode.class,
+                    message = "CONTACTS_NOT_FOUND")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @GetMapping("/getContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<ContactsDTO> getContact(@RequestHeader String email) {
        return contactsService.getContact(email);
     }
 
+    @ApiOperation(value = "Delete single contact details",
+            notes = "Deletes the contact details of the visitor based on his email id",
+            response = MessageResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, response = ContactsDTO.class,
+                    message = "CONTACT_DELETE_SUCCESS"),
+            @ApiResponse(code = 204, response = ErrorCode.class,
+                    message = "CONTACTS_NOT_FOUND")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @DeleteMapping("/deleteContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> deleteContact(@RequestHeader String email) {
@@ -82,6 +131,19 @@ public class ContactsController {
         throw ExpoException.error(ErrorCode.CONTACTS_NOT_FOUND);
     }
 
+    @ApiOperation(value = "Update contact details",
+            notes = "Update the contact details of the visitor based on his email id",
+            response = MessageResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, response = MessageResponse.class,
+                    message = "UPDATE_CONTACT_SUCCESS"),
+            @ApiResponse(code = 400, response = ErrorCode.class,
+                    message = "EMAIL_NOT_FOUND"),
+            @ApiResponse(code = 500, response = MessageResponse.class,
+                    message = "UPDATE_CONTACT_FAILED")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
     @PutMapping("/updateContact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> updateContact(@RequestBody @Valid ContactsDTO contact, @RequestHeader String email) {

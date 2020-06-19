@@ -42,7 +42,7 @@ public class SwaggerConfig {
         new Contact(
             "namm-expo",
             "https://github.com/namma-expo",
-            "namm-expo@gmail.com"),
+            "codegeekbnglr@gmail.com"),
         "Apache License Version 2.0",
         "https://www.apache.org/licenses/LICENSE-2.0",
         Collections.emptyList());
