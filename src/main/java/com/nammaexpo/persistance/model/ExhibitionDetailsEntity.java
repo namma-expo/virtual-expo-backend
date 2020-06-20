@@ -3,6 +3,7 @@ package com.nammaexpo.persistance.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nammaexpo.models.layout.Layout;
+import com.nammaexpo.utils.SerDe;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
@@ -113,10 +114,10 @@ public class ExhibitionDetailsEntity {
   private PageEntity page;
 
   public Layout getPageDetails() {
-    ObjectMapper mapper = new ObjectMapper();
+
     if (page != null && page.getContent() !=null) {
       try {
-        return mapper.readValue(this.page.getContent(), Layout.class);
+        return SerDe.mapper().readValue(this.page.getContent(), Layout.class);
       } catch (Exception e) {
         e.printStackTrace();
       }

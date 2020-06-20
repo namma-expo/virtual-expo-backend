@@ -1,7 +1,6 @@
 package com.nammaexpo.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.expection.ExpoException.ErrorCode;
 import com.nammaexpo.models.enums.MessageCode;
@@ -11,6 +10,7 @@ import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
 import com.nammaexpo.persistance.dao.PageRepository;
 import com.nammaexpo.persistance.model.ExhibitionDetailsEntity;
 import com.nammaexpo.persistance.model.PageEntity;
+import com.nammaexpo.utils.SerDe;
 import io.swagger.annotations.Api;
 import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +49,9 @@ public class PageController {
         .findById(exhibitionId)
         .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
 
-    ObjectMapper mapper = new ObjectMapper();
-
     pageRepository.save(PageEntity.builder()
         .isActive(true)
-        .content(mapper.writeValueAsBytes(layout))
+        .content(SerDe.mapper().writeValueAsBytes(layout))
         .exhibitionDetails(exhibitionDetailsEntity)
         .createdBy(exhibitionDetailsEntity.getExhibitor().getId())
         .build());
@@ -87,10 +85,9 @@ public class PageController {
         .findById(exhibitionId)
         .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
 
-    ObjectMapper mapper = new ObjectMapper();
     PageEntity pageEntity = exhibitionDetailsEntity.getPage();
 
-    pageEntity.setContent(mapper.writeValueAsBytes(layout));
+    pageEntity.setContent(SerDe.mapper().writeValueAsBytes(layout));
 
     pageRepository.save(pageEntity);
 
