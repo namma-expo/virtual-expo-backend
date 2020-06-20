@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,12 +32,9 @@ public class UserProfileEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(
-      name = "user_id",
-      nullable = false,
-      unique = true
-  )
-  private int userId;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
   @Column(
       name = "company"
@@ -84,8 +84,9 @@ public class UserProfileEntity {
 
 
   @Builder
-  public UserProfileEntity(int userId, String company, String phoneNumber, String country, String state, String city) {
-    this.userId = userId;
+  public UserProfileEntity(UserEntity user, String company, String phoneNumber,
+      String country, String state, String city) {
+    this.user = user;
     this.company = company;
     this.phoneNumber = phoneNumber;
     this.country = country;

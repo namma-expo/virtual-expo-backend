@@ -11,4 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ExhibitionDetailsController {
 
+  // Create Exhibition Details
+
+  // Update Exhibition Details
+
+  // Get all Exhibitions
+
+
+
 }
