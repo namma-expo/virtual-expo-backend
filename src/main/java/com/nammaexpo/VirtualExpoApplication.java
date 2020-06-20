@@ -1,9 +1,8 @@
 package com.nammaexpo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nammaexpo.utils.SerDe;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
@@ -12,10 +11,7 @@ public class VirtualExpoApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(VirtualExpoApplication.class, args);
+    SerDe.init();
   }
 
-  @Bean
-  public ObjectMapper createObjectMapper() {
-    return new ObjectMapper();
-  }
 }

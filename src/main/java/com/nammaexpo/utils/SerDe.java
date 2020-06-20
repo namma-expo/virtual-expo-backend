@@ -4,15 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.nammaexpo.expection.ExpoException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
+@Scope("singleton")
 public class SerDe {
-  @Autowired
+
   private static ObjectMapper mapper;
 
   private SerDe() {
 
+  }
+
+  public static void init() {
+    mapper = new ObjectMapper();
   }
 
   public static ObjectMapper mapper() {
