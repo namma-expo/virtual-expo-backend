@@ -9,9 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("com.nammaexpo")
 public class VirtualExpoApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(VirtualExpoApplication.class, args);
-    SerDe.init();
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(VirtualExpoApplication.class, args);
+        SerDe.init();
+    }
 
 }

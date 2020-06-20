@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExhibitionModeratorsRepository extends
-    JpaRepository<ExhibitionModeratorEntity, Integer> {
+        JpaRepository<ExhibitionModeratorEntity, Integer> {
 
 }

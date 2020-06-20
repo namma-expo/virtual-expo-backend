@@ -1,10 +1,6 @@
 package com.nammaexpo.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter
@@ -13,13 +9,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserProfile {
 
-  private String company;
+    private String company;
 
-  private String phoneNumber;
+    private String phoneNumber;
 
-  private String country;
+    private String country;
 
-  private String state;
+    private String state;
 
-  private String city;
+    private String city;
 }
