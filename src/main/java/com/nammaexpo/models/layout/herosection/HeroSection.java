@@ -30,5 +30,6 @@ import lombok.Setter;
 })
 @JsonInclude(Include.NON_NULL)
 public abstract class HeroSection implements Serializable {
+
   private HeroLayoutType layoutType;
 }

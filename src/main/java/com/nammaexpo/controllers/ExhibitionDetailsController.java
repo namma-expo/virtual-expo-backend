@@ -18,5 +18,4 @@ public class ExhibitionDetailsController {
   // Get all Exhibitions
 
 
-
 }

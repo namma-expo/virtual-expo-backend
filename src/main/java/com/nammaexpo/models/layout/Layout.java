@@ -19,6 +19,7 @@ import lombok.Setter;
     ignoreUnknown = true
 )
 public class Layout {
+
   private String pageUrl;
   private Theme theme;
   private String logo;

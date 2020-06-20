@@ -31,6 +31,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     }
 )
 public class ExhibitionSubscriptionEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

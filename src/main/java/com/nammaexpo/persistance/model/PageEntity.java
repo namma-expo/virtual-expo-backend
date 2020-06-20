@@ -27,6 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     name = "pages"
 )
 public class PageEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

@@ -26,6 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
     name = "user_history"
 )
 public class UserHistoryEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

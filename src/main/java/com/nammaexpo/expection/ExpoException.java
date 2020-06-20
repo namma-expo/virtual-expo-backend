@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class ExpoException extends RuntimeException {
+
   private final HttpStatus httpStatusCode;
   private final String errorCodeName;
   private final transient Map<String, Object> context;

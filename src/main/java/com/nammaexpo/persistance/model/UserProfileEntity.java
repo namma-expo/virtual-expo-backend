@@ -28,6 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     name = "user_profiles"
 )
 public class UserProfileEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

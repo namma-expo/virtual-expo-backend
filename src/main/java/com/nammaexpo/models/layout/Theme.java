@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Theme {
+
   private String primaryColor;
   private String buttonColor;
 }

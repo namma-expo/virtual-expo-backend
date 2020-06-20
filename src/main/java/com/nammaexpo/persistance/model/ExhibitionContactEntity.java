@@ -24,6 +24,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     name = "exhibition_contacts"
 )
 public class ExhibitionContactEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

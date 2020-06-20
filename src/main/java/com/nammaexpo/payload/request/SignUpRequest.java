@@ -18,18 +18,18 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @NotBlank
-    private String name;
+  @NotBlank
+  private String name;
 
-    @NotBlank
-    @Email
-    private String email;
+  @NotBlank
+  @Email
+  private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 40)
-    private String password;
+  @NotBlank
+  @Size(min = 6, max = 40)
+  private String password;
 
-    private Role role;
+  private Role role;
 
-    private UserProfile profile;
+  private UserProfile profile;
 }

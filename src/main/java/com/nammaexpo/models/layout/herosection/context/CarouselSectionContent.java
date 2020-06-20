@@ -15,5 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class CarouselSectionContent extends HeroSection {
+
   private List<CarouselSection> carousels;
 }

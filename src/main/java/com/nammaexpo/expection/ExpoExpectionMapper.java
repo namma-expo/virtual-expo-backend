@@ -25,7 +25,8 @@ public class ExpoExpectionMapper {
         e.getHttpStatusCode());
   }
 
-  @ExceptionHandler(value = {ConstraintViolationException.class, MethodArgumentNotValidException.class })
+  @ExceptionHandler(value = {ConstraintViolationException.class,
+      MethodArgumentNotValidException.class})
   public ResponseEntity<ErrorResponse> validationHandling(Exception e) {
     log.error("ERROR:: ", e);
 

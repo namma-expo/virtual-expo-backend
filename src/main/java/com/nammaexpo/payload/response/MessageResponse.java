@@ -15,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageResponse {
-    private MessageCode messageCode;
-    private String message;
+
+  private MessageCode messageCode;
+  private String message;
 }

@@ -26,8 +26,9 @@ import org.hibernate.annotations.CreationTimestamp;
     name = "exhibition_moderators",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "exhibition_id"}),
-})
+    })
 public class ExhibitionModeratorEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;

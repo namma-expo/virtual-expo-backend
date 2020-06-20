@@ -31,7 +31,7 @@ import org.hibernate.annotations.UpdateTimestamp;
     name = "exhibition_details",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = "identity"),
-})
+    })
 public class ExhibitionDetailsEntity {
 
   @Id

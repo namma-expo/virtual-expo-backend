@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class CarouselSection {
+
   private String image;
   private String heading;
   private String description;

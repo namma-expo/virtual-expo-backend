@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class VideoContent extends Section {
+
   private String video;
   private String heading;
   private String description;

@@ -13,5 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class VideoSectionContent extends HeroSection {
+
   private String videoLink;
 }

@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class IconContent extends Section {
+
   private String icon;
   private String heading;
   private String description;
