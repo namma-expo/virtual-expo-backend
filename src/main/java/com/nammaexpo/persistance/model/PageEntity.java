@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,12 +31,9 @@ public class PageEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(
-      name = "exhibition_id",
-      nullable = false,
-      updatable = false
-  )
-  private int exhibitionId;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "exhibition_id", unique = true)
+  private ExhibitionDetailsEntity exhibitionDetails;
 
   @Column(
       name = "is_active",

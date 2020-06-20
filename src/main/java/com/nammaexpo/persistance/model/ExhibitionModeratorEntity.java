@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,11 +32,9 @@ public class ExhibitionModeratorEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(
-      name = "user_id",
-      nullable = false
-  )
-  private int userId;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
   @Column(
       name = "is_active",
@@ -43,12 +43,9 @@ public class ExhibitionModeratorEntity {
   )
   private boolean isActive;
 
-  @Column(
-      name = "exhibition_id",
-      nullable = false,
-      updatable = false
-  )
-  private int exhibitionId;
+  @ManyToOne
+  @JoinColumn(name = "exhibition_id")
+  private ExhibitionDetailsEntity exhibitionDetails;
 
   @Column(
       name = "created_at",

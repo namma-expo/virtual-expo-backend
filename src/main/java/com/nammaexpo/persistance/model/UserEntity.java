@@ -76,7 +76,7 @@ public class UserEntity {
       mappedBy = "user",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
-      fetch = FetchType.LAZY
+      fetch = FetchType.EAGER
   )
   private UserProfileEntity profile;
 

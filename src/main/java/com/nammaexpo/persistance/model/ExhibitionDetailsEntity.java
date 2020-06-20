@@ -2,11 +2,17 @@ package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,12 +48,9 @@ public class ExhibitionDetailsEntity {
   )
   private String logo;
 
-  @Column(
-      name = "exhibitor_id",
-      nullable = false,
-      unique = true
-  )
-  private int exhibitorId;
+  @OneToOne(cascade = CascadeType.DETACH)
+  @JoinColumn(name = "exhibitor_id", referencedColumnName = "id")
+  private UserEntity exhibitor;
 
   @Column(
       name = "identity",
@@ -94,4 +97,14 @@ public class ExhibitionDetailsEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date approvedAt;
 
+  @OneToMany(mappedBy = "exhibitionDetails")
+  private Set<ExhibitionModeratorEntity> exhibitionModerators;
+
+  @OneToOne(
+      mappedBy = "exhibitionDetails",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  private PageEntity page;
 }
