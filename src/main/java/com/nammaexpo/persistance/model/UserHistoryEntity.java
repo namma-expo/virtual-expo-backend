@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -64,4 +65,11 @@ public class UserHistoryEntity {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date createdAt;
 
+
+  @Builder
+  public UserHistoryEntity(int userId, UserAction action, int exhibitionId) {
+    this.userId = userId;
+    this.action = action;
+    this.exhibitionId = exhibitionId;
+  }
 }

@@ -48,7 +48,8 @@ public class ExpoException extends RuntimeException {
     UNREGISTERED_USER(HttpStatus.FORBIDDEN),
     INVALID_USER_NAME_PASSWORD(HttpStatus.FORBIDDEN),
     TOKEN_EXPIRED(HttpStatus.FORBIDDEN),
-    TOKEN_VERIFICATION_FAILED(HttpStatus.FORBIDDEN);
+    TOKEN_VERIFICATION_FAILED(HttpStatus.FORBIDDEN),
+    TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND);
 
     @Getter
     HttpStatus responseCode;

@@ -1,6 +1,9 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nammaexpo.models.layout.Layout;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -17,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -107,4 +111,26 @@ public class ExhibitionDetailsEntity {
       fetch = FetchType.EAGER
   )
   private PageEntity page;
+
+  public Layout getPageDetails() {
+    ObjectMapper mapper = new ObjectMapper();
+    if (page != null && page.getContent() !=null) {
+      try {
+        return mapper.readValue(this.page.getContent(), Layout.class);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  @Builder
+  public ExhibitionDetailsEntity(String name, String logo,
+      UserEntity exhibitor, String identity) {
+
+    this.name = name;
+    this.logo = logo;
+    this.exhibitor = exhibitor;
+    this.identity = identity;
+  }
 }

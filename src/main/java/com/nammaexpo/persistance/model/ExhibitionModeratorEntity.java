@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -65,4 +66,12 @@ public class ExhibitionModeratorEntity {
   )
   private int createdBy;
 
+  @Builder
+  public ExhibitionModeratorEntity(UserEntity user, boolean isActive,
+      ExhibitionDetailsEntity exhibitionDetails, int createdBy) {
+    this.user = user;
+    this.isActive = isActive;
+    this.exhibitionDetails = exhibitionDetails;
+    this.createdBy = createdBy;
+  }
 }

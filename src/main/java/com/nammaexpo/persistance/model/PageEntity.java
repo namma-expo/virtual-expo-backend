@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -75,4 +76,13 @@ public class PageEntity {
       nullable = false
   )
   private int createdBy;
+
+  @Builder
+  public PageEntity(ExhibitionDetailsEntity exhibitionDetails, boolean isActive, byte[] content,
+      int createdBy) {
+    this.exhibitionDetails = exhibitionDetails;
+    this.isActive = isActive;
+    this.content = content;
+    this.createdBy = createdBy;
+  }
 }

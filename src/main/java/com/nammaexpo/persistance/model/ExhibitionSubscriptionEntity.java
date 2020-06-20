@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -84,4 +85,11 @@ public class ExhibitionSubscriptionEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
   private Date deletedAt;
+
+  @Builder
+  public ExhibitionSubscriptionEntity(SubscriptionPlan planId, int exhibitionId, int createdBy) {
+    this.planId = planId;
+    this.exhibitionId = exhibitionId;
+    this.createdBy = createdBy;
+  }
 }
