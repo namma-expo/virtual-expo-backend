@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
-@Api(tags = "User UserProfile Controller")
+@Api(tags = "UserProfile Controller")
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
