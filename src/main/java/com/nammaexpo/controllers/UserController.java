@@ -11,4 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
+    // Change password
+
+    // Change user details
+
+
 }

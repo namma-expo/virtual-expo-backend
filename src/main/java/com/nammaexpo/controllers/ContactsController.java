@@ -35,7 +35,7 @@ public class ContactsController {
 
     @ApiOperation(value = "Add new contact details",
             notes = "Exhibitor can collect visitors contact details",
-            response = com.nammaexpo.payload.response.MessageResponse.class)
+            response = MessageResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, response = MessageResponse.class,
                     message = "CREATE_CONTACT_SUCCESS"),

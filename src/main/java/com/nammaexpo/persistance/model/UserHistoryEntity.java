@@ -2,6 +2,7 @@ package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nammaexpo.models.enums.UserAction;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,8 +19,9 @@ import java.util.Date;
         name = "user_history"
 )
 public class UserHistoryEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(
@@ -42,7 +44,7 @@ public class UserHistoryEntity {
             name = "exhibition_id",
             updatable = false
     )
-    private int exhibitionId;
+    private String exhibitionId;
 
     @Column(
             name = "created_at",
@@ -55,4 +57,11 @@ public class UserHistoryEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
     private Date createdAt;
 
+
+    @Builder
+    public UserHistoryEntity(int userId, UserAction action, String exhibitionId) {
+        this.userId = userId;
+        this.action = action;
+        this.exhibitionId = exhibitionId;
+    }
 }

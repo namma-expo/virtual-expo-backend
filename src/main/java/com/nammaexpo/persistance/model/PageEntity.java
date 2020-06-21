@@ -1,6 +1,7 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,16 +19,14 @@ import java.util.Date;
         name = "pages"
 )
 public class PageEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(
-            name = "exhibition_id",
-            nullable = false,
-            updatable = false
-    )
-    private int exhibitionId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exhibition_id", unique = true)
+    private ExhibitionDetailsEntity exhibitionDetails;
 
     @Column(
             name = "is_active",
@@ -68,4 +67,13 @@ public class PageEntity {
             nullable = false
     )
     private int createdBy;
+
+    @Builder
+    public PageEntity(ExhibitionDetailsEntity exhibitionDetails, boolean isActive, byte[] content,
+                      int createdBy) {
+        this.exhibitionDetails = exhibitionDetails;
+        this.isActive = isActive;
+        this.content = content;
+        this.createdBy = createdBy;
+    }
 }

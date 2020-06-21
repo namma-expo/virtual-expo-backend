@@ -1,5 +1,6 @@
 package com.nammaexpo.payload.request;
 
+import com.nammaexpo.models.UserProfile;
 import com.nammaexpo.models.enums.Role;
 import lombok.*;
 
@@ -26,4 +27,6 @@ public class SignUpRequest {
     private String password;
 
     private Role role;
+
+    private UserProfile profile;
 }

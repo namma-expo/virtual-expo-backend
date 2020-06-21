@@ -15,6 +15,7 @@ import java.util.Map;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageResponse {
+
     @ApiModelProperty(notes = "response code")
     private String code;
     @ApiModelProperty(notes = "response message")

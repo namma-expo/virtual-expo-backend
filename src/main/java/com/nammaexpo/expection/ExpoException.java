@@ -24,18 +24,8 @@ public class ExpoException extends RuntimeException {
         this.context = context;
     }
 
-    public ExpoException(MessageCode messageCode) {
-        super();
-        this.httpStatusCode = messageCode.getResponseCode();
-        this.errorCode = messageCode.name();
-        this.errorMessage = messageCode.getResponseMessage();
-        this.context = null;
-    }
-
-
     public static ExpoException error(MessageCode messageCode) {
-        //return new ExpoException(messageCode, new HashMap<>());
-        return new ExpoException(messageCode);
+        return new ExpoException(messageCode, new HashMap<>());
     }
 
     public static ExpoException error(MessageCode messageCode, Map<String, Object> context) {

@@ -19,16 +19,14 @@ import java.util.Date;
         name = "user_profiles"
 )
 public class UserProfileEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(
-            name = "user_id",
-            nullable = false,
-            unique = true
-    )
-    private int userId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Column(
             name = "company"
@@ -78,8 +76,9 @@ public class UserProfileEntity {
 
 
     @Builder
-    public UserProfileEntity(int userId, String company, String phoneNumber, String country, String state, String city) {
-        this.userId = userId;
+    public UserProfileEntity(UserEntity user, String company, String phoneNumber,
+                             String country, String state, String city) {
+        this.user = user;
         this.company = company;
         this.phoneNumber = phoneNumber;
         this.country = country;
