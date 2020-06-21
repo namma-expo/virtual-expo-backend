@@ -1,5 +1,6 @@
 package com.nammaexpo.controllers;
 
+import com.google.common.collect.ImmutableMap;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.request.ExhibitionRequest;
@@ -71,8 +72,8 @@ public class ExhibitionDetailsController {
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
-                .message(exhibitionDetailsEntity.getIdentity())
-                .code(MessageCode.EXHIBITION_CREATED.name())
+                .context(ImmutableMap.of("identity", exhibitionDetailsEntity.getIdentity()))
+                .messageCode(MessageCode.EXHIBITION_CREATED)
                 .build();
     }
 
@@ -96,8 +97,7 @@ public class ExhibitionDetailsController {
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
-                .code(MessageCode.EXHIBITION_UPDATED.name())
-                .message(MessageCode.EXHIBITION_UPDATED.getResponseMessage())
+                .messageCode(MessageCode.EXHIBITION_UPDATED)
                 .build();
     }
 

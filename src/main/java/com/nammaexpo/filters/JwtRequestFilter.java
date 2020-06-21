@@ -67,8 +67,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             response.getWriter().write(mapper.
                     writeValueAsString(MessageResponse.builder()
-                            .code(e.getErrorCode())
-                            .message(e.getMessage())
+                            .messageCode(e.getMessageCode())
                             .context(e.getContext())
                             .build()
                     )

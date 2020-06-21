@@ -26,7 +26,7 @@ public class ExpoExpectionMapper {
 
     @ExceptionHandler(value = {ExpoException.class})
     public ResponseEntity<Object> handleExpoException(ExpoException e) {
-        log.error("ERROR:: {}", e.getErrorCode(), e);
+        log.error("ERROR:: {}", e.getMessage(), e);
         return error(e.getHttpStatusCode(), e);
     }
 
@@ -56,8 +56,7 @@ public class ExpoExpectionMapper {
 
     private ResponseEntity<Object> error(HttpStatus httpStatusCode, ExpoException e) {
         return new ResponseEntity(MessageResponse.builder()
-                        .code(e.getErrorCode())
-                        .message(e.getErrorMessage())
+                        .messageCode(e.getMessageCode())
                         .context(e.getContext())
                         .build(), httpStatusCode);
     }
@@ -66,9 +65,8 @@ public class ExpoExpectionMapper {
         List<String> list = new ArrayList<>();
         list.add(e.getLocalizedMessage());
         return new ResponseEntity(MessageResponse.builder()
-                        .code(messageCode.name())
-                        .message(messageCode.getResponseMessage())
+                        .messageCode(messageCode)
                         .context(ImmutableMap.of("error", list))
-                        .build(), messageCode.getResponseCode());
+                        .build(), messageCode.getStatusCode());
     }
 }

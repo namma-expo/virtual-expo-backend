@@ -1,8 +1,11 @@
 package com.nammaexpo.models.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum MessageCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Server error"),
     USER_NAME_EXIST(HttpStatus.BAD_REQUEST, "User name is exist"),
@@ -39,13 +42,17 @@ public enum MessageCode {
     EXHIBITION_EXISTS(HttpStatus.BAD_REQUEST, "Exhibition exists");
 
     @Getter
-    private final HttpStatus responseCode;
+    private final String code;
 
     @Getter
-    private final String responseMessage;
+    private final String message;
+
+    @Getter
+    private HttpStatus statusCode;
 
     MessageCode(HttpStatus responseCode, String responseMessage) {
-        this.responseCode = responseCode;
-        this.responseMessage = responseMessage;
+        this.code = this.name();
+        this.message = responseMessage;
+        this.statusCode = responseCode;
     }
 }
