@@ -5,22 +5,22 @@ import com.nammaexpo.models.enums.MessageCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 public class ExpoException extends RuntimeException {
 
     private final HttpStatus httpStatusCode;
-    private final String errorCode;
-    private final String errorMessage;
     private final transient Map<String, Object> context;
+    MessageCode messageCode;
 
     public ExpoException(MessageCode messageCode, Map<String, Object> context) {
-        super(messageCode.getResponseMessage());
-        this.httpStatusCode = messageCode.getResponseCode();
-        this.errorCode = messageCode.name();
-        this.errorMessage = messageCode.getResponseMessage();
+        super(messageCode.getMessage());
+        this.httpStatusCode = messageCode.getStatusCode();
+        this.messageCode = messageCode;
         this.context = context;
     }
 
@@ -33,14 +33,14 @@ public class ExpoException extends RuntimeException {
     }
 
     public static ExpoException error(MessageCode messageCode, Throwable e) {
-        String message = e.getCause() == null ? "" : e.getCause().toString();
-
         if (e instanceof ExpoException) {
             return (ExpoException) e;
         } else if (e.getCause() instanceof ExpoException) {
             return (ExpoException) e.getCause();
         } else {
-            return new ExpoException(messageCode, ImmutableMap.of("message", message));
+            List<String> list = new ArrayList<>();
+            list.add(e.getLocalizedMessage());
+            return new ExpoException(messageCode, ImmutableMap.of("error", list));
         }
     }
 }

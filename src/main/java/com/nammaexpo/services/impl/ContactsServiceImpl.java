@@ -44,8 +44,8 @@ public class ContactsServiceImpl implements ContactsService {
         log.debug("Added new contact");
 
         return ResponseEntity.ok(MessageResponse.builder()
-                .code(MessageCode.CREATE_CONTACT_SUCCESS.name())
-                .message(MessageCode.CREATE_CONTACT_SUCCESS.getResponseMessage()).build());
+                .messageCode(MessageCode.CREATE_CONTACT_SUCCESS)
+                .build());
     }
 
     @Override
@@ -66,8 +66,7 @@ public class ContactsServiceImpl implements ContactsService {
         contactsRepo.save(contactEntity);
 
         return new ResponseEntity<>(MessageResponse.builder()
-                .code(MessageCode.UPDATE_CONTACT_SUCCESS.name())
-                .message(MessageCode.UPDATE_CONTACT_SUCCESS.getResponseMessage())
+                .messageCode(MessageCode.UPDATE_CONTACT_SUCCESS)
                 .build(),HttpStatus.ACCEPTED);
     }
 

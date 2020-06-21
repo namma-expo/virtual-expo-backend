@@ -125,8 +125,7 @@ public class ContactsController {
             contactsRepo.delete(contact.get());
             log.debug("Contact deleted");
             return new ResponseEntity<>(MessageResponse.builder()
-                    .code(MessageCode.CONTACT_DELETE_SUCCESS.name())
-                    .message(MessageCode.CONTACT_DELETE_SUCCESS.getResponseMessage()).build(), HttpStatus.ACCEPTED);
+                    .messageCode(MessageCode.CREATE_CONTACT_SUCCESS).build(), HttpStatus.ACCEPTED);
         }
         throw ExpoException.error(MessageCode.CONTACTS_NOT_FOUND);
     }

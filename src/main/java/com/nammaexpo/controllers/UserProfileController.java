@@ -74,8 +74,7 @@ public class UserProfileController {
         userProfileRepository.save(userProfileEntity);
 
         return MessageResponse.builder()
-                .code(MessageCode.PROFILE_UPDATED.name())
-                .message(MessageCode.PROFILE_UPDATED.getResponseMessage())
+                .messageCode(MessageCode.PROFILE_UPDATED)
                 .build();
     }
 }
