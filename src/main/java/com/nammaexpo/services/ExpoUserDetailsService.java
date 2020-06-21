@@ -1,6 +1,6 @@
 package com.nammaexpo.services;
 
-import com.nammaexpo.expection.ErrorCode;
+import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.persistance.dao.UserRepository;
@@ -28,7 +28,7 @@ public class ExpoUserDetailsService implements UserDetailsService {
 
         return userOptional
                 .map(ExpoUserDetails::new)
-                .orElseThrow(() -> ExpoException.error(ErrorCode.UNREGISTERED_USER)
+                .orElseThrow(() -> ExpoException.error(MessageCode.UNREGISTERED_USER)
                 );
     }
 }

@@ -1,6 +1,7 @@
 package com.nammaexpo.expection;
 
 import com.google.common.collect.ImmutableMap;
+import com.nammaexpo.models.enums.MessageCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -9,26 +10,39 @@ import java.util.Map;
 
 @Getter
 public class ExpoException extends RuntimeException {
+
     private final HttpStatus httpStatusCode;
-    private final String errorCodeName;
+    private final String errorCode;
+    private final String errorMessage;
     private final transient Map<String, Object> context;
 
-    public ExpoException(ErrorCode errorCode, Map<String, Object> context) {
+    public ExpoException(MessageCode messageCode, Map<String, Object> context) {
         super();
-        this.httpStatusCode = errorCode.getResponseCode();
-        this.errorCodeName = errorCode.name();
+        this.httpStatusCode = messageCode.getResponseCode();
+        this.errorCode = messageCode.name();
+        this.errorMessage = messageCode.getResponseMessage();
         this.context = context;
     }
 
-    public static ExpoException error(ErrorCode errorCode) {
-        return new ExpoException(errorCode, new HashMap<>());
+    public ExpoException(MessageCode messageCode) {
+        super();
+        this.httpStatusCode = messageCode.getResponseCode();
+        this.errorCode = messageCode.name();
+        this.errorMessage = messageCode.getResponseMessage();
+        this.context = null;
     }
 
-    public static ExpoException error(ErrorCode errorCode, Map<String, Object> context) {
-        return new ExpoException(errorCode, context);
+
+    public static ExpoException error(MessageCode messageCode) {
+        //return new ExpoException(messageCode, new HashMap<>());
+        return new ExpoException(messageCode);
     }
 
-    public static ExpoException error(ErrorCode errorCode, Throwable e) {
+    public static ExpoException error(MessageCode messageCode, Map<String, Object> context) {
+        return new ExpoException(messageCode, context);
+    }
+
+    public static ExpoException error(MessageCode messageCode, Throwable e) {
         String message = e.getCause() == null ? "" : e.getCause().toString();
 
         if (e instanceof ExpoException) {
@@ -36,7 +50,7 @@ public class ExpoException extends RuntimeException {
         } else if (e.getCause() instanceof ExpoException) {
             return (ExpoException) e.getCause();
         } else {
-            return new ExpoException(errorCode, ImmutableMap.of("message", message));
+            return new ExpoException(messageCode, ImmutableMap.of("message", message));
         }
     }
 }

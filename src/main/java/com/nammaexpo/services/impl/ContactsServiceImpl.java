@@ -1,7 +1,5 @@
 package com.nammaexpo.services.impl;
 
-import com.nammaexpo.expection.ErrorCode;
-import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.request.ContactsDTO;
 import com.nammaexpo.payload.response.MessageResponse;
@@ -46,8 +44,8 @@ public class ContactsServiceImpl implements ContactsService {
         log.debug("Added new contact");
 
         return ResponseEntity.ok(MessageResponse.builder()
-                .messageCode(MessageCode.CREATE_CONTACT_SUCCESS)
-                .message("Added contact to DB").build());
+                .code(MessageCode.findName(16))
+                .message(MessageCode.findMessage(16)).build());
     }
 
     @Override
@@ -67,20 +65,18 @@ public class ContactsServiceImpl implements ContactsService {
         contactEntity.setUpdatedBy(updaterId);
         contactsRepo.save(contactEntity);
 
-        return new ResponseEntity<>(MessageResponse
-                .builder()
-                .messageCode(MessageCode.UPDATE_CONTACT_SUCCESS)
-                .message("Successfully updated contact")
-                .build(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(MessageResponse.builder()
+                .code(MessageCode.findName(21))
+                .message(MessageCode.findMessage(21))
+                .build(),HttpStatus.ACCEPTED);
     }
 
     @Override
-    public ResponseEntity<List<ContactsDTO>> getAllContacts() {
+    public List<ContactsDTO> getAllContacts() {
 
         List<ExhibitionContactEntity> contactsList = contactsRepo.findAll();
+        List<ContactsDTO> contactsDTOS = new ArrayList<>();
         if (contactsList.size() > 0) {
-
-            List<ContactsDTO> contactsDTOS = new ArrayList<>();
             for (ExhibitionContactEntity contactEntity :
                     contactsList) {
                 contactsDTOS.add(ContactsDTO.builder()
@@ -93,20 +89,19 @@ public class ContactsServiceImpl implements ContactsService {
                         .phone2(contactEntity.getPhone2())
                         .build());
             }
-            return new ResponseEntity<>(contactsDTOS, HttpStatus.OK);
-        } else {
-            throw ExpoException.error(ErrorCode.CONTACTS_NOT_FOUND);
         }
+        return contactsDTOS;
     }
 
     @Override
-    public ResponseEntity<ContactsDTO> getContact(String email) {
+    public ContactsDTO getContact(String email) {
 
         Optional<ExhibitionContactEntity> contact = contactsRepo.findByEmail(email);
+        ContactsDTO contactsDTO = null;
         if (contact.isPresent()) {
 
-            ExhibitionContactEntity contactEntity = contact.get();
-            return new ResponseEntity<>(ContactsDTO.builder()
+        ExhibitionContactEntity contactEntity = contact.get();
+            contactsDTO = ContactsDTO.builder()
                     .email(contactEntity.getEmail())
                     .name(contactEntity.getName())
                     .company(contactEntity.getCompany())
@@ -114,8 +109,8 @@ public class ContactsServiceImpl implements ContactsService {
                     .occupation(contactEntity.getOccupation())
                     .phone1(contactEntity.getPhone1())
                     .phone2(contactEntity.getPhone2())
-                    .build(), HttpStatus.OK);
-        } else
-            throw ExpoException.error(ErrorCode.CONTACTS_NOT_FOUND);
+                    .build();
+        }
+        return contactsDTO;
     }
 }

@@ -2,7 +2,7 @@ package com.nammaexpo.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.models.ErrorResponse;
+import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.services.ExpoUserDetailsService;
 import com.nammaexpo.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +66,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
 
             response.getWriter().write(mapper.
-                    writeValueAsString(ErrorResponse.builder()
-                            .errorCode(e.getErrorCodeName())
+                    writeValueAsString(MessageResponse.builder()
+                            .code(e.getErrorCode())
                             .message(e.getMessage())
                             .context(e.getContext())
                             .build()

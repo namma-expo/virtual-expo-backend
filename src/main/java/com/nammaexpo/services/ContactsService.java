@@ -14,7 +14,7 @@ public interface ContactsService {
 
     ResponseEntity<MessageResponse> updateContact(ExhibitionContactEntity exhibitionContactEntity, @Valid ContactsDTO contact, String updatedBy);
 
-    ResponseEntity<List<ContactsDTO>> getAllContacts();
+    List<ContactsDTO> getAllContacts();
 
-    ResponseEntity<ContactsDTO> getContact(String email);
+    ContactsDTO getContact(String email);
 }
