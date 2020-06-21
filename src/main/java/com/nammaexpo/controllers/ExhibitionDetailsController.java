@@ -72,7 +72,7 @@ public class ExhibitionDetailsController {
 
         return MessageResponse.builder()
                 .message(exhibitionDetailsEntity.getIdentity())
-                .code(MessageCode.findName(23))
+                .code(MessageCode.EXHIBITION_CREATED.name())
                 .build();
     }
 
@@ -96,8 +96,8 @@ public class ExhibitionDetailsController {
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
-                .code(MessageCode.findName(24))
-                .message(MessageCode.findMessage(24))
+                .code(MessageCode.EXHIBITION_UPDATED.name())
+                .message(MessageCode.EXHIBITION_UPDATED.getResponseMessage())
                 .build();
     }
 

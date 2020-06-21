@@ -51,8 +51,8 @@ public class UserHistoryController {
                 .build());
 
         return MessageResponse.builder()
-                .code(MessageCode.findName(28))
-                .message(MessageCode.findMessage(28))
+                .code(MessageCode.USER_HISTORY_LOGGED.name())
+                .message(MessageCode.USER_HISTORY_LOGGED.getResponseMessage())
                 .build();
     }
 

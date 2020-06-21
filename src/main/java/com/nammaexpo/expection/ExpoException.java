@@ -17,7 +17,7 @@ public class ExpoException extends RuntimeException {
     private final transient Map<String, Object> context;
 
     public ExpoException(MessageCode messageCode, Map<String, Object> context) {
-        super();
+        super(messageCode.getResponseMessage());
         this.httpStatusCode = messageCode.getResponseCode();
         this.errorCode = messageCode.name();
         this.errorMessage = messageCode.getResponseMessage();
