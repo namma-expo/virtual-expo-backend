@@ -12,9 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class ExhibitionDetailResponse {
-    private int exhibitionId;
     private String name;
-    private String identifier;
+    private String identity;
     private String logo;
+    private String url;
     private Layout layout;
 }

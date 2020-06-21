@@ -22,6 +22,7 @@ import java.util.Set;
         name = "exhibition_details",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "identity"),
+                @UniqueConstraint(columnNames = "url"),
         })
 public class ExhibitionDetailsEntity {
 
@@ -38,6 +39,13 @@ public class ExhibitionDetailsEntity {
             name = "logo"
     )
     private String logo;
+
+    @Column(
+            name = "url",
+            unique = true,
+            nullable = false
+    )
+    private String url;
 
     @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "exhibitor_id", referencedColumnName = "id")
@@ -101,12 +109,13 @@ public class ExhibitionDetailsEntity {
 
     @Builder
     public ExhibitionDetailsEntity(String name, String logo,
-                                   UserEntity exhibitor, String identity) {
+                                   UserEntity exhibitor, String identity, String url) {
 
         this.name = name;
         this.logo = logo;
         this.exhibitor = exhibitor;
         this.identity = identity;
+        this.url = url;
     }
 
     public Layout getPageDetails() {

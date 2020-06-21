@@ -10,4 +10,5 @@ import lombok.*;
 public class ExhibitionRequest {
     private String name;
     private String logo;
+    private String url;
 }

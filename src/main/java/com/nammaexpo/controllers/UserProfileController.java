@@ -29,7 +29,7 @@ public class UserProfileController {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    @GetMapping("/user/profile")
+    @GetMapping("/users/profile")
     public UserProfile getUserProfile(
             @RequestHeader(value = "Authorization") String authorization
     ) {
@@ -52,7 +52,7 @@ public class UserProfileController {
     }
 
 
-    @PutMapping("/user/profile")
+    @PutMapping("/users/profile")
     public MessageResponse updateUserProfile(
             @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @NotNull UserProfile userProfile

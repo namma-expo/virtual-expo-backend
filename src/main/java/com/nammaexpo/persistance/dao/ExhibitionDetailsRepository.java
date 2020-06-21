@@ -10,5 +10,9 @@ import java.util.Optional;
 public interface ExhibitionDetailsRepository extends
         JpaRepository<ExhibitionDetailsEntity, Integer> {
 
+    Optional<ExhibitionDetailsEntity> findByIdentity(String exhibitorId);
+
+    Optional<ExhibitionDetailsEntity> findByUrl(String url);
+
     Optional<ExhibitionDetailsEntity> findByExhibitorId(int exhibitorId);
 }

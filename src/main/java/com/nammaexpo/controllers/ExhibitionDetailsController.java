@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class ExhibitionDetailsController {
     private UserRepository userRepository;
 
     @PostMapping(
-            value = "/exhibition",
+            value = "/exhibitions",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
@@ -53,35 +54,46 @@ public class ExhibitionDetailsController {
                         ErrorCode.TRANSACTION_NOT_FOUND)
                 );
 
+        Optional<ExhibitionDetailsEntity> entity = exhibitionDetailsRepository
+                .findByUrl(exhibitionRequest.getUrl());
+
+        if (entity.isPresent()) {
+            throw ExpoException.error(ErrorCode.EXHIBITION_EXISTS);
+        }
+
         ExhibitionDetailsEntity exhibitionDetailsEntity = ExhibitionDetailsEntity.builder()
                 .exhibitor(userEntity)
                 .identity(UUID.randomUUID().toString())
                 .logo(exhibitionRequest.getLogo())
                 .name(exhibitionRequest.getName())
+                .url(exhibitionRequest.getUrl())
                 .build();
 
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
+                .message(exhibitionDetailsEntity.getIdentity())
                 .messageCode(MessageCode.EXHIBITION_CREATED)
                 .build();
     }
 
-    @PutMapping(value = "/exhibition/{exhibitionId}",
+    @PutMapping(value = "/exhibitions/{exhibitionId}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse updateExhibition(
             @RequestHeader(value = "Authorization") String authorization,
-            @PathVariable("exhibitionId") int exhibitionId,
+            @PathVariable("exhibitionId") String exhibitionId,
             @RequestBody @NotNull ExhibitionRequest exhibitionRequest) {
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findById(exhibitionId)
+                .findByIdentity(exhibitionId)
                 .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
 
         exhibitionDetailsEntity.setName(exhibitionRequest.getName());
         exhibitionDetailsEntity.setLogo(exhibitionRequest.getLogo());
+        exhibitionDetailsEntity.setUrl(exhibitionRequest.getUrl());
+
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
@@ -89,7 +101,7 @@ public class ExhibitionDetailsController {
                 .build();
     }
 
-    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exhibitions/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ExhibitionDetailResponse> getAllExhibitions(
             @RequestHeader(value = "Authorization") String authorization) {
 
@@ -97,24 +109,24 @@ public class ExhibitionDetailsController {
 
         return exhibitionDetails.stream()
                 .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
-                        .exhibitionId(exhibitionDetailsEntity.getId())
-                        .identifier(exhibitionDetailsEntity.getIdentity())
+                        .identity(exhibitionDetailsEntity.getIdentity())
                         .name(exhibitionDetailsEntity.getName())
                         .logo(exhibitionDetailsEntity.getLogo())
+                        .url(exhibitionDetailsEntity.getUrl())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/exhibition/{exhibitionId}",
+    @GetMapping(value = "/exhibitions/{exhibitionId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ExhibitionDetailResponse getExhibition(
             @RequestHeader(value = "Authorization") String authorization,
-            @PathVariable("exhibitionId") int exhibitionId) {
+            @PathVariable("exhibitionId") String exhibitionId) {
 
-        return exhibitionDetailsRepository.findById(exhibitionId)
+        return exhibitionDetailsRepository.findByIdentity(exhibitionId)
                 .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
-                        .exhibitionId(exhibitionDetailsEntity.getId())
-                        .identifier(exhibitionDetailsEntity.getIdentity())
+                        .url(exhibitionDetailsEntity.getUrl())
+                        .identity(exhibitionDetailsEntity.getIdentity())
                         .name(exhibitionDetailsEntity.getName())
                         .logo(exhibitionDetailsEntity.getLogo())
                         .layout(exhibitionDetailsEntity.getPageDetails())
@@ -123,7 +135,7 @@ public class ExhibitionDetailsController {
     }
 
 
-    @GetMapping(value = "/exhibition", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ExhibitionDetailResponse getExhibitionBasedOnExhibitor(
             @RequestHeader(value = "Authorization") String authorization) {
@@ -139,8 +151,7 @@ public class ExhibitionDetailsController {
 
         return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
                 .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
-                        .exhibitionId(exhibitionDetailsEntity.getId())
-                        .identifier(exhibitionDetailsEntity.getIdentity())
+                        .identity(exhibitionDetailsEntity.getIdentity())
                         .name(exhibitionDetailsEntity.getName())
                         .logo(exhibitionDetailsEntity.getLogo())
                         .layout(exhibitionDetailsEntity.getPageDetails())

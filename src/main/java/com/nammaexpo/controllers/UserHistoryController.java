@@ -31,10 +31,10 @@ public class UserHistoryController {
     @Autowired
     private UserHistoryRepository userHistoryRepository;
 
-    @PostMapping("/user/history/{action}/{exhibitionId}")
+    @PostMapping("/users/history/{action}/{exhibitionId}")
     public MessageResponse createUserHistory(
             @PathVariable("action") UserAction userAction,
-            @PathVariable("exhibitionId") int exhibitionId,
+            @PathVariable("exhibitionId") String exhibitionId,
             @RequestHeader(value = "Authorization") String authorization
     ) {
 
@@ -57,7 +57,7 @@ public class UserHistoryController {
     }
 
 
-    @GetMapping("/user/history")
+    @GetMapping("/users/history")
     public List<UserHistoryResponse> getUserHistory(
             @RequestHeader(value = "Authorization") String authorization
     ) {

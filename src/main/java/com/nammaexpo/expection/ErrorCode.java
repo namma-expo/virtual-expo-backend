@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
     USER_NAME_EXIST(HttpStatus.BAD_REQUEST),
+    EXHIBITION_EXISTS(HttpStatus.BAD_REQUEST),
     EMAIL_IN_USE(HttpStatus.BAD_REQUEST),
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST),
     UNREGISTERED_USER(HttpStatus.NOT_FOUND),

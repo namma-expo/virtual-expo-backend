@@ -44,7 +44,7 @@ public class UserHistoryEntity {
             name = "exhibition_id",
             updatable = false
     )
-    private int exhibitionId;
+    private String exhibitionId;
 
     @Column(
             name = "created_at",
@@ -59,7 +59,7 @@ public class UserHistoryEntity {
 
 
     @Builder
-    public UserHistoryEntity(int userId, UserAction action, int exhibitionId) {
+    public UserHistoryEntity(int userId, UserAction action, String exhibitionId) {
         this.userId = userId;
         this.action = action;
         this.exhibitionId = exhibitionId;

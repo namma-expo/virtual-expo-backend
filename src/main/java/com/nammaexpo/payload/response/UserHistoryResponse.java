@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserHistoryResponse {
-    private int exhibitionId;
+    private String exhibitionId;
     private UserAction userAction;
     private Date date;
 }
