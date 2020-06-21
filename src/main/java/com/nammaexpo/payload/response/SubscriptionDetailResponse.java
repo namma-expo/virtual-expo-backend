@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SubscriptionDetailRespone {
+public class SubscriptionDetailResponse {
     private SubscriptionPlan planId;
     private String exhibitionId;
     private Date createdAt;

@@ -4,7 +4,7 @@ import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.models.enums.SubscriptionPlan;
 import com.nammaexpo.payload.response.MessageResponse;
-import com.nammaexpo.payload.response.SubscriptionDetailRespone;
+import com.nammaexpo.payload.response.SubscriptionDetailResponse;
 import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
 import com.nammaexpo.persistance.dao.ExhibitionSubscriptionRepository;
 import com.nammaexpo.persistance.model.ExhibitionDetailsEntity;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Api(tags = "Exhibition Subscription Controller")
@@ -47,12 +46,12 @@ public class ExhibitionSubscriptionController {
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
-        long count = subscriptionEntities.stream().filter(exhibitionSubscriptionEntity -> exhibitionSubscriptionEntity.getDeletedAt() == null).count();
-
-        log.info("COUNT: {}", count);
+        long count = subscriptionEntities.stream()
+                .filter(subscription -> subscription.getDeletedAt() == null)
+                .count();
 
         if (count > 0) {
-            throw ExpoException.error(MessageCode.INTERNAL_SERVER_ERROR);
+            throw ExpoException.error(MessageCode.ACTIVE_SUBSCRIPTION_FOUND);
         }
 
         subscriptionRepository.save(ExhibitionSubscriptionEntity.builder()
@@ -62,7 +61,7 @@ public class ExhibitionSubscriptionController {
                 .build());
 
         return MessageResponse.builder()
-                .message("CREATED")
+                .messageCode(MessageCode.SUBSCRIPTION_ACTIVATED)
                 .build();
     }
 
@@ -73,15 +72,16 @@ public class ExhibitionSubscriptionController {
             @PathVariable("planId") SubscriptionPlan planId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND);
-
         ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
                 .findByIdentity(exhibitionId)
-                .orElseThrow(expoExceptionSupplier);
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
-        ExhibitionSubscriptionEntity oldSubscription = subscriptionEntities.stream().filter(exhibitionSubscriptionEntity -> exhibitionSubscriptionEntity.getDeletedAt() == null).findFirst().orElseThrow(expoExceptionSupplier);
+        ExhibitionSubscriptionEntity oldSubscription = subscriptionEntities.stream()
+                .filter(subscription -> subscription.getDeletedAt() == null)
+                .findFirst()
+                .orElseThrow(() -> ExpoException.error(MessageCode.ACTIVE_SUBSCRIPTION_NOT_FOUND));
 
         oldSubscription.setDeletedAt(new Date());
 
@@ -94,13 +94,13 @@ public class ExhibitionSubscriptionController {
                 .build());
 
         return MessageResponse.builder()
-                .message("UPDATED")
+                .messageCode(MessageCode.SUBSCRIPTION_UPGRADED)
                 .build();
     }
 
     @GetMapping("/subscriptions/{exhibitionId}")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public List<SubscriptionDetailRespone> getActiveSubscription(
+    public List<SubscriptionDetailResponse> getActiveSubscription(
             @PathVariable("exhibitionId") String exhibitionId,
             @RequestHeader(value = "Authorization") String authorization) {
 
@@ -109,7 +109,8 @@ public class ExhibitionSubscriptionController {
                 .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
 
         return exhibitionDetails.getSubscriptions().stream()
-                .map(exhibitionSubscriptionEntity -> SubscriptionDetailRespone.builder()
+                .filter(subscription -> subscription.getDeletedAt() == null)
+                .map(exhibitionSubscriptionEntity -> SubscriptionDetailResponse.builder()
                         .exhibitionId(exhibitionDetails.getIdentity())
                         .planId(exhibitionSubscriptionEntity.getPlanId())
                         .createdAt(exhibitionSubscriptionEntity.getCreatedAt())

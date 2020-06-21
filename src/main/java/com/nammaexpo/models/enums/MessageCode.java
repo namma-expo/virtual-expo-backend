@@ -39,7 +39,11 @@ public enum MessageCode {
     USER_HISTORY_LOGGED(HttpStatus.CREATED, "User history is logged successfully"),
 
     TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Transaction not found"),
-    EXHIBITION_EXISTS(HttpStatus.BAD_REQUEST, "Exhibition exists");
+    EXHIBITION_EXISTS(HttpStatus.BAD_REQUEST, "Exhibition exists"),
+    ACTIVE_SUBSCRIPTION_FOUND(HttpStatus.BAD_REQUEST, "Active Subscription Found"),
+    ACTIVE_SUBSCRIPTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "No Active Subscriptions Found"),
+    SUBSCRIPTION_ACTIVATED(HttpStatus.CREATED, "Subscription Activated Successfully"),
+    SUBSCRIPTION_UPGRADED(HttpStatus.CREATED, "Subscription Upgraded Successfully");
 
     @Getter
     private final String code;
