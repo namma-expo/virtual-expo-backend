@@ -2,8 +2,8 @@ package com.nammaexpo.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
-import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
+import com.nammaexpo.models.enums.MessageCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class SerDe {
             return mapper().writeValueAsString(t);
         } catch (Exception ex) {
             log.error("Serialization fail - {}", ex);
-            throw ExpoException.error(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw ExpoException.error(MessageCode.INTERNAL_SERVER_ERROR);
         }
     }
 

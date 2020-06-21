@@ -1,7 +1,6 @@
 package com.nammaexpo.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.models.layout.Layout;
@@ -41,7 +40,7 @@ public class PageController {
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
                 .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
 
         pageRepository.save(PageEntity.builder()
                 .isActive(true)
@@ -51,7 +50,8 @@ public class PageController {
                 .build());
 
         return MessageResponse.builder()
-                .messageCode(MessageCode.PAGE_CREATED)
+                .code(MessageCode.findName(25))
+                .message(MessageCode.findMessage(25))
                 .build();
     }
 
@@ -64,7 +64,7 @@ public class PageController {
 
         return exhibitionDetailsRepository.findByIdentity(exhibitionId)
                 .map(ExhibitionDetailsEntity::getPageDetails)
-                .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
     }
 
     @PutMapping("/pages/{exhibitionId}")
@@ -77,7 +77,7 @@ public class PageController {
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
                 .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
 
         PageEntity pageEntity = exhibitionDetailsEntity.getPage();
 
@@ -86,7 +86,8 @@ public class PageController {
         pageRepository.save(pageEntity);
 
         return MessageResponse.builder()
-                .messageCode(MessageCode.PAGE_UPDATED)
+                .code(MessageCode.findName(26))
+                .message(MessageCode.findMessage(26))
                 .build();
     }
 }

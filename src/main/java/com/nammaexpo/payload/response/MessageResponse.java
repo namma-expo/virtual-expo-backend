@@ -1,12 +1,15 @@
 package com.nammaexpo.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.nammaexpo.models.enums.MessageCode;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.util.Map;
+
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +17,9 @@ import lombok.*;
 public class MessageResponse {
 
     @ApiModelProperty(notes = "response code")
-    private MessageCode messageCode;
+    private String code;
     @ApiModelProperty(notes = "response message")
     private String message;
+    @ApiModelProperty(notes = "detailed message")
+    private Map<String, Object> context;
 }

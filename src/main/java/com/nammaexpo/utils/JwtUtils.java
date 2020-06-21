@@ -1,6 +1,6 @@
 package com.nammaexpo.utils;
 
-import com.nammaexpo.expection.ErrorCode;
+import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.models.JwtPayload;
@@ -26,10 +26,10 @@ public class JwtUtils {
                     .getBody();
 
         } catch (SignatureException e) {
-            throw ExpoException.error(ErrorCode.TOKEN_VERIFICATION_FAILED);
+            throw ExpoException.error(MessageCode.TOKEN_VERIFICATION_FAILED);
 
         } catch (ExpiredJwtException e) {
-            throw ExpoException.error(ErrorCode.TOKEN_EXPIRED);
+            throw ExpoException.error(MessageCode.TOKEN_EXPIRED);
         }
     }
 

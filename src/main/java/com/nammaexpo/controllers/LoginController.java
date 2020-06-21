@@ -1,8 +1,8 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.expection.ErrorCode;
+import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.models.ErrorResponse;
+import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.payload.request.LoginRequest;
 import com.nammaexpo.payload.response.JwtResponse;
@@ -47,10 +47,10 @@ public class LoginController {
             "on successful authentication generates the access token", response = JwtResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Authenticated", response = JwtResponse.class),
-            @ApiResponse(code = 403, message = "Authentication Failed", response = ErrorResponse.class)
+            @ApiResponse(code = 403, message = "Authentication Failed", response = MessageResponse.class)
     })
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+   /* @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
+            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")*/
     @PostMapping("/authenticate")
     public ResponseEntity<JwtResponse> authenticateUser(
             @RequestBody LoginRequest loginRequest) {
@@ -62,7 +62,7 @@ public class LoginController {
             );
 
         } catch (BadCredentialsException e) {
-            throw ExpoException.error(ErrorCode.INVALID_USER_NAME_PASSWORD);
+            throw ExpoException.error(MessageCode.INVALID_USER_NAME_PASSWORD);
         }
 
         final ExpoUserDetails userDetails = userDetailsService

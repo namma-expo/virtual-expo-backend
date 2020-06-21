@@ -1,12 +1,11 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.expection.ErrorCode;
+import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.models.ErrorResponse;
+import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.models.ExpoUserDetails;
 import com.nammaexpo.payload.request.SignUpRequest;
 import com.nammaexpo.payload.response.JwtResponse;
-import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.UserEntity;
 import com.nammaexpo.utils.JwtUtils;
@@ -60,7 +59,7 @@ public class RegistrationController {
             "on successful registration user will get the access token to login", response = JwtResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User Registration Successful", response = MessageResponse.class),
-            @ApiResponse(code = 400, message = "User Registration Failed", response = ErrorResponse.class)
+            @ApiResponse(code = 400, message = "", response = MessageResponse.class)
     })
     @PostMapping("/signup")
     public ResponseEntity<JwtResponse> registerUser(
@@ -71,7 +70,7 @@ public class RegistrationController {
         Optional<UserEntity> optionalUser = userRepository.findByEmail(signUpRequest.getEmail());
 
         if (optionalUser.isPresent()) {
-            throw ExpoException.error(ErrorCode.EMAIL_IN_USE);
+            throw ExpoException.error(MessageCode.EMAIL_IN_USE);
         }
         UserEntity userEntity = userRepository.save(ModelUtils
                 .toUserEntityFromSignUpRequest(

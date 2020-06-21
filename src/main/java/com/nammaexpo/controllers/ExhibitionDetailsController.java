@@ -1,6 +1,5 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.request.ExhibitionRequest;
@@ -51,14 +50,14 @@ public class ExhibitionDetailsController {
 
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> ExpoException.error(
-                        ErrorCode.TRANSACTION_NOT_FOUND)
+                        MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         Optional<ExhibitionDetailsEntity> entity = exhibitionDetailsRepository
                 .findByUrl(exhibitionRequest.getUrl());
 
         if (entity.isPresent()) {
-            throw ExpoException.error(ErrorCode.EXHIBITION_EXISTS);
+            throw ExpoException.error(MessageCode.EXHIBITION_EXISTS);
         }
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = ExhibitionDetailsEntity.builder()
@@ -73,7 +72,7 @@ public class ExhibitionDetailsController {
 
         return MessageResponse.builder()
                 .message(exhibitionDetailsEntity.getIdentity())
-                .messageCode(MessageCode.EXHIBITION_CREATED)
+                .code(MessageCode.findName(23))
                 .build();
     }
 
@@ -88,7 +87,7 @@ public class ExhibitionDetailsController {
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
                 .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
 
         exhibitionDetailsEntity.setName(exhibitionRequest.getName());
         exhibitionDetailsEntity.setLogo(exhibitionRequest.getLogo());
@@ -97,7 +96,8 @@ public class ExhibitionDetailsController {
         exhibitionDetailsRepository.save(exhibitionDetailsEntity);
 
         return MessageResponse.builder()
-                .messageCode(MessageCode.EXHIBITION_UPDATED)
+                .code(MessageCode.findName(24))
+                .message(MessageCode.findMessage(24))
                 .build();
     }
 
@@ -131,7 +131,7 @@ public class ExhibitionDetailsController {
                         .logo(exhibitionDetailsEntity.getLogo())
                         .layout(exhibitionDetailsEntity.getPageDetails())
                         .build())
-                .orElseThrow(() -> ExpoException.error(ErrorCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
     }
 
 
@@ -143,7 +143,7 @@ public class ExhibitionDetailsController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException
-                .error(ErrorCode.TRANSACTION_NOT_FOUND);
+                .error(MessageCode.TRANSACTION_NOT_FOUND);
 
         UserEntity userEntity = userRepository.findByEmail(userName).orElseThrow(
                 expoExceptionSupplier

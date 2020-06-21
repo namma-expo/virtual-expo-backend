@@ -1,6 +1,5 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.UserProfile;
 import com.nammaexpo.models.enums.MessageCode;
@@ -37,7 +36,7 @@ public class UserProfileController {
 
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> ExpoException.error(
-                        ErrorCode.TRANSACTION_NOT_FOUND)
+                        MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         UserProfileEntity userProfileEntity = userEntity.getProfile();
@@ -61,7 +60,7 @@ public class UserProfileController {
 
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> ExpoException.error(
-                        ErrorCode.TRANSACTION_NOT_FOUND)
+                        MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         UserProfileEntity userProfileEntity = userEntity.getProfile();
@@ -75,7 +74,8 @@ public class UserProfileController {
         userProfileRepository.save(userProfileEntity);
 
         return MessageResponse.builder()
-                .messageCode(MessageCode.PROFILE_UPDATED)
+                .code(MessageCode.findName(27))
+                .message(MessageCode.findMessage(27))
                 .build();
     }
 }

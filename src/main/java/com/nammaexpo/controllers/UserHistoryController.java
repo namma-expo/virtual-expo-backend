@@ -1,6 +1,5 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.expection.ErrorCode;
 import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.models.enums.UserAction;
@@ -42,7 +41,7 @@ public class UserHistoryController {
 
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> ExpoException.error(
-                        ErrorCode.TRANSACTION_NOT_FOUND)
+                        MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         userHistoryRepository.save(UserHistoryEntity.builder()
@@ -52,7 +51,8 @@ public class UserHistoryController {
                 .build());
 
         return MessageResponse.builder()
-                .messageCode(MessageCode.USER_HISTORY_LOGGED)
+                .code(MessageCode.findName(28))
+                .message(MessageCode.findMessage(28))
                 .build();
     }
 
@@ -66,7 +66,7 @@ public class UserHistoryController {
 
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> ExpoException.error(
-                        ErrorCode.TRANSACTION_NOT_FOUND)
+                        MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         List<UserHistoryEntity> userHistoryEntities = userHistoryRepository.findByUserId(userEntity.getId());
@@ -78,7 +78,5 @@ public class UserHistoryController {
                         .userAction(userHistoryEntity.getAction())
                         .build())
                 .collect(Collectors.toList());
-
-
     }
 }
