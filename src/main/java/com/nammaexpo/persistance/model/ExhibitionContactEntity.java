@@ -19,8 +19,9 @@ import java.util.Date;
         name = "exhibition_contacts"
 )
 public class ExhibitionContactEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(

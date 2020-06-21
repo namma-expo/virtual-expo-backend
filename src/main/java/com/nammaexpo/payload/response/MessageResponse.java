@@ -12,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageResponse {
+
     @ApiModelProperty(notes = "response code")
     private MessageCode messageCode;
     @ApiModelProperty(notes = "response message")

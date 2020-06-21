@@ -2,6 +2,7 @@ package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nammaexpo.models.enums.SubscriptionPlan;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,9 @@ import java.util.Date;
         }
 )
 public class ExhibitionSubscriptionEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(
@@ -74,4 +76,11 @@ public class ExhibitionSubscriptionEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
     private Date deletedAt;
+
+    @Builder
+    public ExhibitionSubscriptionEntity(SubscriptionPlan planId, int exhibitionId, int createdBy) {
+        this.planId = planId;
+        this.exhibitionId = exhibitionId;
+        this.createdBy = createdBy;
+    }
 }

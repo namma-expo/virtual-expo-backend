@@ -18,6 +18,7 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST),
     UPDATE_CONTACT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_METHOD_EXCEPTION(HttpStatus.METHOD_NOT_ALLOWED),
+    TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND),
 
 
     //contacts apis specific erros

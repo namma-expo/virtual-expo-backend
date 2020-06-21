@@ -4,6 +4,7 @@ import com.nammaexpo.models.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,6 +33,18 @@ public class ExpoExpectionMapper {
                 .build(),
                 e.getHttpStatusCode());
     }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class,
+            MethodArgumentNotValidException.class})
+    public ResponseEntity<ErrorResponse> validationHandling(Exception e) {
+        log.error("ERROR:: ", e);
+
+        return new ResponseEntity<>(ErrorResponse.builder()
+                .errorCode(ErrorCode.VALIDATION_FAILED.name())
+                .build(),
+                HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(value = {BindException.class, MethodArgumentNotValidException.class, ConstraintViolationException.class})
     public ResponseEntity<ErrorResponse> bindingException(Exception exception) {

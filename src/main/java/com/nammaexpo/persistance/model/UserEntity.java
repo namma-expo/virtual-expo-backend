@@ -22,7 +22,7 @@ import java.util.Date;
 public class UserEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(
@@ -61,6 +61,14 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToOne(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    private UserProfileEntity profile;
+
     @Column(
             name = "created_at",
             updatable = false,
@@ -83,12 +91,15 @@ public class UserEntity {
     private Date updatedAt;
 
     @Builder
-    public UserEntity(String name, String password, String email, String identity, Role role) {
-
+    public UserEntity(String name, String password, String email, String identity, Role role,
+                      UserProfileEntity profile) {
         this.name = name;
         this.password = password;
         this.email = email;
         this.identity = identity;
         this.role = role;
+
+        profile.setUser(this);
+        this.profile = profile;
     }
 }

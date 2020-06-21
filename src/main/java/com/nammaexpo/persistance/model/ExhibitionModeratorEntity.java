@@ -1,6 +1,7 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,15 +20,14 @@ import java.util.Date;
                 @UniqueConstraint(columnNames = {"user_id", "exhibition_id"}),
         })
 public class ExhibitionModeratorEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(
-            name = "user_id",
-            nullable = false
-    )
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Column(
             name = "is_active",
@@ -36,12 +36,9 @@ public class ExhibitionModeratorEntity {
     )
     private boolean isActive;
 
-    @Column(
-            name = "exhibition_id",
-            nullable = false,
-            updatable = false
-    )
-    private int exhibitionId;
+    @ManyToOne
+    @JoinColumn(name = "exhibition_id")
+    private ExhibitionDetailsEntity exhibitionDetails;
 
     @Column(
             name = "created_at",
@@ -60,4 +57,12 @@ public class ExhibitionModeratorEntity {
     )
     private int createdBy;
 
+    @Builder
+    public ExhibitionModeratorEntity(UserEntity user, boolean isActive,
+                                     ExhibitionDetailsEntity exhibitionDetails, int createdBy) {
+        this.user = user;
+        this.isActive = isActive;
+        this.exhibitionDetails = exhibitionDetails;
+        this.createdBy = createdBy;
+    }
 }

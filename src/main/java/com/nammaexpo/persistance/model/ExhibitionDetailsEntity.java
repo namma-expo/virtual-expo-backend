@@ -1,6 +1,9 @@
 package com.nammaexpo.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.nammaexpo.models.layout.Layout;
+import com.nammaexpo.utils.SerDe;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +26,7 @@ import java.util.Date;
 public class ExhibitionDetailsEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(
@@ -35,12 +39,9 @@ public class ExhibitionDetailsEntity {
     )
     private String logo;
 
-    @Column(
-            name = "exhibitor_id",
-            nullable = false,
-            unique = true
-    )
-    private int exhibitorId;
+    @OneToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "exhibitor_id", referencedColumnName = "id")
+    private UserEntity exhibitor;
 
     @Column(
             name = "identity",
@@ -87,5 +88,36 @@ public class ExhibitionDetailsEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss z", timezone = "IST")
     private Date approvedAt;
 
+    @OneToMany(mappedBy = "exhibitionDetails")
+    private Set<ExhibitionModeratorEntity> exhibitionModerators;
 
+    @OneToOne(
+            mappedBy = "exhibitionDetails",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    private PageEntity page;
+
+    @Builder
+    public ExhibitionDetailsEntity(String name, String logo,
+                                   UserEntity exhibitor, String identity) {
+
+        this.name = name;
+        this.logo = logo;
+        this.exhibitor = exhibitor;
+        this.identity = identity;
+    }
+
+    public Layout getPageDetails() {
+
+        if (page != null && page.getContent() != null) {
+            try {
+                return SerDe.mapper().readValue(this.page.getContent(), Layout.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }

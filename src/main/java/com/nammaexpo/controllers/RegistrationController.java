@@ -10,6 +10,7 @@ import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.UserEntity;
 import com.nammaexpo.utils.JwtUtils;
+import com.nammaexpo.utils.ModelUtils;
 import com.nammaexpo.utils.SendEmail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +30,6 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 
 @Api(value = "Registration Controller", description = "User registration APIs can be found here")
@@ -73,14 +73,9 @@ public class RegistrationController {
         if (optionalUser.isPresent()) {
             throw ExpoException.error(ErrorCode.EMAIL_IN_USE);
         }
-
-        UserEntity userEntity = userRepository.save(UserEntity.builder()
-                .name(signUpRequest.getName())
-                .email(signUpRequest.getEmail())
-                .password(encoder.encode(signUpRequest.getPassword()))
-                .identity(UUID.randomUUID().toString())
-                .role(signUpRequest.getRole())
-                .build());
+        UserEntity userEntity = userRepository.save(ModelUtils
+                .toUserEntityFromSignUpRequest(
+                        signUpRequest, encoder.encode(signUpRequest.getPassword())));
 
         final String jwt = jwtUtils.generateJwtToken(new ExpoUserDetails(userEntity));
 
