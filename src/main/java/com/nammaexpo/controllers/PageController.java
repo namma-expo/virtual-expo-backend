@@ -50,8 +50,8 @@ public class PageController {
                 .build());
 
         return MessageResponse.builder()
-                .code(MessageCode.findName(25))
-                .message(MessageCode.findMessage(25))
+                .code(MessageCode.PAGE_CREATED.name())
+                .message(MessageCode.PAGE_CREATED.getResponseMessage())
                 .build();
     }
 
@@ -86,8 +86,8 @@ public class PageController {
         pageRepository.save(pageEntity);
 
         return MessageResponse.builder()
-                .code(MessageCode.findName(26))
-                .message(MessageCode.findMessage(26))
+                .code(MessageCode.PAGE_UPDATED.name())
+                .message(MessageCode.PAGE_UPDATED.getResponseMessage())
                 .build();
     }
 }
