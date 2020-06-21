@@ -34,18 +34,6 @@ public class ExpoExpectionMapper {
                 e.getHttpStatusCode());
     }
 
-    @ExceptionHandler(value = {ConstraintViolationException.class,
-            MethodArgumentNotValidException.class})
-    public ResponseEntity<ErrorResponse> validationHandling(Exception e) {
-        log.error("ERROR:: ", e);
-
-        return new ResponseEntity<>(ErrorResponse.builder()
-                .errorCode(ErrorCode.VALIDATION_FAILED.name())
-                .build(),
-                HttpStatus.BAD_REQUEST);
-    }
-
-
     @ExceptionHandler(value = {BindException.class, MethodArgumentNotValidException.class, ConstraintViolationException.class})
     public ResponseEntity<ErrorResponse> bindingException(Exception exception) {
         log.error("ERROR:: {}", exception.getMessage(), exception);
