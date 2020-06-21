@@ -107,6 +107,9 @@ public class ExhibitionDetailsEntity {
     )
     private PageEntity page;
 
+    @OneToMany(mappedBy = "exhibition")
+    private Set<ExhibitionSubscriptionEntity> subscriptions;
+
     @Builder
     public ExhibitionDetailsEntity(String name, String logo,
                                    UserEntity exhibitor, String identity, String url) {
