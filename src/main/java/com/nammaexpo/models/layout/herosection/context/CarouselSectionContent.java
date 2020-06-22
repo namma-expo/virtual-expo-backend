@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CarouselSectionContent extends HeroSection {
-    private List<CarouselSection> carousels;
+    private transient List<CarouselSection> carousels;
 }

@@ -16,12 +16,12 @@ import java.util.Map;
 public class JwtUtils {
 
     @Value(value = "${jwtSecretKey}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     private Claims verifySignatureAndDecryptToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
+                    .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody();
 
@@ -48,7 +48,7 @@ public class JwtUtils {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1440 * 60 * 1000))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

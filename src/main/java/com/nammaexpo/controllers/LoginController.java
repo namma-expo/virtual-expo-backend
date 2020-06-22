@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@Api(value = "Login Controller", description = "Authenticate the user")
+@Api(value = "Login Controller")
 public class LoginController {
 
     @Autowired

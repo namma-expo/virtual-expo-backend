@@ -15,7 +15,7 @@ public class ExpoException extends RuntimeException {
 
     private final HttpStatus httpStatusCode;
     private final transient Map<String, Object> context;
-    MessageCode messageCode;
+    private final MessageCode messageCode;
 
     public ExpoException(MessageCode messageCode, Map<String, Object> context) {
         super(messageCode.getMessage());

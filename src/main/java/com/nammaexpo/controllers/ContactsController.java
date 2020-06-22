@@ -11,7 +11,6 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@Api(value = "contacts", description = "operations pertaining to vistor contact details")
+@Api(value = "contacts")
 public class ContactsController {
 
     @Autowired
@@ -78,7 +77,7 @@ public class ContactsController {
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<List<ContactsDTO>> getAllContacts() {
         List<ContactsDTO>  allContacts = contactsService.getAllContacts();
-        if (allContacts.size() > 0)
+        if (!allContacts.isEmpty())
             return new ResponseEntity<>(allContacts, HttpStatus.OK);
         else
             throw ExpoException.error(MessageCode.CONTACTS_NOT_FOUND);
@@ -95,7 +94,7 @@ public class ContactsController {
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
             allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @RequestMapping( path = "/contact", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping( path = "/contact")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<ContactsDTO> getContact(@RequestHeader String email) {
         ContactsDTO contactsDTO = contactsService.getContact(email);
@@ -125,7 +124,7 @@ public class ContactsController {
             contactsRepo.delete(contact.get());
             log.debug("Contact deleted");
             return new ResponseEntity<>(MessageResponse.builder()
-                    .messageCode(MessageCode.CREATE_CONTACT_SUCCESS).build(), HttpStatus.ACCEPTED);
+                    .messageCode(MessageCode.CONTACT_DELETE_SUCCESS).build(), HttpStatus.ACCEPTED);
         }
         throw ExpoException.error(MessageCode.CONTACTS_NOT_FOUND);
     }
@@ -153,7 +152,7 @@ public class ContactsController {
         if (!visitorContact.isPresent()) {
             throw ExpoException.error(MessageCode.EMAIL_NOT_FOUND);
         }
-        if (visitorContact.isPresent() && updatedBy != null) {
+        if (updatedBy != null) {
             return contactsService.updateContact(visitorContact.get(), contact, updatedBy);
         }
         throw ExpoException.error(MessageCode.UPDATE_CONTACT_FAILED);

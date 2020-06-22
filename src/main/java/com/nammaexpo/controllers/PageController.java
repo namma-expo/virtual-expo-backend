@@ -36,7 +36,7 @@ public class PageController {
             @PathVariable("exhibitionId") String exhibitionId,
             @NotNull @RequestBody Layout layout,
             @RequestHeader(value = "Authorization") String authorization
-    ) throws Exception {
+    ) throws JsonProcessingException {
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
                 .findByIdentity(exhibitionId)
