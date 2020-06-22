@@ -36,11 +36,9 @@ public class ExhibitionSubscriptionEntity {
     private SubscriptionPlan planId;
 
 
-    @Column(
-            name = "exhibition_id",
-            nullable = false
-    )
-    private int exhibitionId;
+    @ManyToOne
+    @JoinColumn(name = "exhibition_id")
+    private ExhibitionDetailsEntity exhibition;
 
     @Column(
             name = "created_by",
@@ -78,9 +76,9 @@ public class ExhibitionSubscriptionEntity {
     private Date deletedAt;
 
     @Builder
-    public ExhibitionSubscriptionEntity(SubscriptionPlan planId, int exhibitionId, int createdBy) {
+    public ExhibitionSubscriptionEntity(SubscriptionPlan planId, ExhibitionDetailsEntity exhibition, int createdBy) {
         this.planId = planId;
-        this.exhibitionId = exhibitionId;
+        this.exhibition = exhibition;
         this.createdBy = createdBy;
     }
 }
