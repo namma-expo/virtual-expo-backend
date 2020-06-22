@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Setter
 @Builder
 @AllArgsConstructor
-public class ContactsDTO {
+public class ContactsRequest {
 
     @NotBlank
     @ApiModelProperty(notes = "name of the person", required = true)
