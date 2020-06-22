@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 
-@Api(value = "Registration Controller", description = "User registration APIs can be found here")
+@Api(value = "Registration Controller")
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -84,9 +84,7 @@ public class RegistrationController {
                 try {
                     sendEmail.sendEmail(signUpRequest.getEmail(),
                             "Registration Successful", "Template-1");
-                } catch (MessagingException e) {
-                    log.error("Error sending email for the user {}", signUpRequest.getEmail(), e);
-                } catch (IOException e) {
+                } catch (MessagingException|IOException e) {
                     log.error("Error sending email for the user {}", signUpRequest.getEmail(), e);
                 }
             }

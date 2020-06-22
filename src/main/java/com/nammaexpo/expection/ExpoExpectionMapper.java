@@ -23,50 +23,48 @@ import static com.nammaexpo.models.enums.MessageCode.*;
 @RestControllerAdvice
 public class ExpoExpectionMapper {
 
+    public static final String ERROR_MESSAGE = "ERROR:: {}";
 
     @ExceptionHandler(value = {ExpoException.class})
-    public ResponseEntity<Object> handleExpoException(ExpoException e) {
-        log.error("ERROR:: {}", e.getMessage(), e);
+    public ResponseEntity<MessageResponse> handleExpoException(ExpoException e) {
         return error(e.getHttpStatusCode(), e);
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
-    public ResponseEntity<Object> bindingException(Exception exception) {
-        log.error("ERROR:: {}", exception.getMessage(), exception);
+    public ResponseEntity<MessageResponse> bindingException(Exception exception) {
         return error(VALIDATION_FAILED, exception);
     }
 
     @ExceptionHandler(value = {JpaSystemException.class})
-    public ResponseEntity<Object> jpaSystemException(Exception exception) {
-        log.error("ERROR:: {}", exception.getMessage(), exception);
+    public ResponseEntity<MessageResponse> jpaSystemException(Exception exception) {
         return error(INTERNAL_SERVER_ERROR, exception);
     }
 
     @ExceptionHandler(value = {AccessDeniedException.class})
-    public ResponseEntity<Object> accessDenied(Exception exception) {
-        log.error("ERROR:: {}", exception.getMessage(), exception);
+    public ResponseEntity<MessageResponse> accessDenied(Exception exception) {
         return error(ACCESS_DENIED, exception);
     }
 
     @ExceptionHandler(value = {DataIntegrityViolationException.class, SQLIntegrityConstraintViolationException.class})
-    public ResponseEntity<Object> constraintVoilation(Exception exception) {
-        log.error("ERROR:: {}", exception.getMessage(), exception);
+    public ResponseEntity<MessageResponse> constraintVoilation(Exception exception) {
         return error(DATABASE_ERROR, exception);
     }
 
-    private ResponseEntity<Object> error(HttpStatus httpStatusCode, ExpoException e) {
-        return new ResponseEntity(MessageResponse.builder()
+    private ResponseEntity<MessageResponse> error(HttpStatus httpStatusCode, ExpoException e) {
+        log.error(ERROR_MESSAGE, e.getMessage(), e);
+        return new ResponseEntity<>(MessageResponse.builder()
                         .messageCode(e.getMessageCode())
                         .context(e.getContext())
                         .build(), httpStatusCode);
     }
 
-    private ResponseEntity<Object> error(MessageCode messageCode, Exception e) {
+    private ResponseEntity<MessageResponse> error(MessageCode messageCode, Exception e) {
+        log.error(ERROR_MESSAGE, e.getMessage(), e);
         List<String> list = new ArrayList<>();
         list.add(e.getLocalizedMessage());
-        return new ResponseEntity(MessageResponse.builder()
-                        .messageCode(messageCode)
-                        .context(ImmutableMap.of("error", list))
-                        .build(), messageCode.getStatusCode());
+        return new ResponseEntity<>(MessageResponse.builder()
+                .messageCode(messageCode)
+                .context(ImmutableMap.of("error", list))
+                .build(), messageCode.getStatusCode());
     }
 }

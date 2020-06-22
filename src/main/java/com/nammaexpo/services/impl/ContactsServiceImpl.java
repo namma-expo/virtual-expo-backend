@@ -75,7 +75,7 @@ public class ContactsServiceImpl implements ContactsService {
 
         List<ExhibitionContactEntity> contactsList = contactsRepo.findAll();
         List<ContactsDTO> contactsDTOS = new ArrayList<>();
-        if (contactsList.size() > 0) {
+        if (!contactsList.isEmpty()) {
             for (ExhibitionContactEntity contactEntity :
                     contactsList) {
                 contactsDTOS.add(ContactsDTO.builder()

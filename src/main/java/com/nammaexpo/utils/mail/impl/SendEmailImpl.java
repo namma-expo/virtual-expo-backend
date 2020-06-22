@@ -19,15 +19,6 @@ class SendEmailImpl implements SendEmail {
     @Override
     public void sendEmail(String to, String sub, String mailTemplate) throws MessagingException, IOException {
 
-        //For simple email
-/*
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(to);
-        msg.setSubject(sub);
-        msg.setText("mailContent");
-        javaMailSender.send(msg);
-*/
-
         //Send email with attachments
         MimeMessage msg = javaMailSender.createMimeMessage();
 
@@ -38,16 +29,8 @@ class SendEmailImpl implements SendEmail {
 
         helper.setSubject(sub);
 
-        // default = text/plain
-        //helper.setText("Check attachment for image!");
-
         // true = text/html
         helper.setText("<h1>User registration successful</h1>", true);
-
-        // hard coded a file path
-        //FileSystemResource file = new FileSystemResource(new File("path/android.png"));
-
-        //helper.addAttachment("attachment1.png", new ClassPathResource("attachment1.png"));
 
         javaMailSender.send(msg);
 
