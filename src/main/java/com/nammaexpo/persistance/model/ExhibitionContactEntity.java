@@ -16,8 +16,10 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(
-        name = "exhibition_contacts"
-)
+        name = "exhibition_contacts",
+        uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email", "exhibition_id"})
+})
 public class ExhibitionContactEntity {
 
     @Id
@@ -61,11 +63,9 @@ public class ExhibitionContactEntity {
     )
     private String phone2;
 
-    @Column(
-            name = "exhibition_id",
-            nullable = false
-    )
-    private int exhibitionId;
+    @ManyToOne
+    @JoinColumn(name = "exhibition_id")
+    private ExhibitionDetailsEntity exhibitionDetails;
 
     @Column(
             name = "created_by",
@@ -101,7 +101,7 @@ public class ExhibitionContactEntity {
     @Builder
     public ExhibitionContactEntity(String name, String email,
                                    String notes, String company, String occupation, String phone1,
-                                   String phone2, int exhibitionId, int createdBy, int updatedBy) {
+                                   String phone2, ExhibitionDetailsEntity exhibitionDetails, int createdBy, int updatedBy) {
         this.name = name;
         this.email = email;
         this.notes = notes;
@@ -109,7 +109,7 @@ public class ExhibitionContactEntity {
         this.occupation = occupation;
         this.phone1 = phone1;
         this.phone2 = phone2;
-        this.exhibitionId = exhibitionId;
+        this.exhibitionDetails = exhibitionDetails;
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
     }
