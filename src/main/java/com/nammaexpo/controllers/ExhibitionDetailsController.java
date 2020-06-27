@@ -77,18 +77,26 @@ public class ExhibitionDetailsController {
                 .build();
     }
 
-    @PutMapping(value = "/exhibitions/{exhibitionId}",
+    @PutMapping(value = "/exhibitions",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse updateExhibition(
             @RequestHeader(value = "Authorization") String authorization,
-            @PathVariable("exhibitionId") String exhibitionId,
             @RequestBody @NotNull ExhibitionRequest exhibitionRequest) {
 
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
+                MessageCode.TRANSACTION_NOT_FOUND);
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(expoExceptionSupplier
+                );
+
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(expoExceptionSupplier);
 
         exhibitionDetailsEntity.setName(exhibitionRequest.getName());
         exhibitionDetailsEntity.setLogo(exhibitionRequest.getLogo());
@@ -99,6 +107,30 @@ public class ExhibitionDetailsController {
         return MessageResponse.builder()
                 .messageCode(MessageCode.EXHIBITION_UPDATED)
                 .build();
+    }
+
+    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('EXHIBITOR')")
+    public ExhibitionDetailResponse getExhibitionBasedOnExhibitor(
+            @RequestHeader(value = "Authorization") String authorization) {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException
+                .error(MessageCode.TRANSACTION_NOT_FOUND);
+
+        UserEntity userEntity = userRepository.findByEmail(userName).orElseThrow(
+                expoExceptionSupplier
+        );
+
+        return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
+                .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
+                        .identity(exhibitionDetailsEntity.getIdentity())
+                        .name(exhibitionDetailsEntity.getName())
+                        .logo(exhibitionDetailsEntity.getLogo())
+                        .page(exhibitionDetailsEntity.getPageDetails())
+                        .build())
+                .orElseThrow(expoExceptionSupplier);
     }
 
     @GetMapping(value = "/exhibitions/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -129,33 +161,8 @@ public class ExhibitionDetailsController {
                         .identity(exhibitionDetailsEntity.getIdentity())
                         .name(exhibitionDetailsEntity.getName())
                         .logo(exhibitionDetailsEntity.getLogo())
-                        .layout(exhibitionDetailsEntity.getPageDetails())
+                        .page(exhibitionDetailsEntity.getPageDetails())
                         .build())
                 .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
-    }
-
-
-    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ExhibitionDetailResponse getExhibitionBasedOnExhibitor(
-            @RequestHeader(value = "Authorization") String authorization) {
-
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException
-                .error(MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName).orElseThrow(
-                expoExceptionSupplier
-        );
-
-        return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
-                .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
-                        .identity(exhibitionDetailsEntity.getIdentity())
-                        .name(exhibitionDetailsEntity.getName())
-                        .logo(exhibitionDetailsEntity.getLogo())
-                        .layout(exhibitionDetailsEntity.getPageDetails())
-                        .build())
-                .orElseThrow(expoExceptionSupplier);
     }
 }

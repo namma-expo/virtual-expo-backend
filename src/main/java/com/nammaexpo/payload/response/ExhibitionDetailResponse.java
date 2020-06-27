@@ -16,5 +16,5 @@ public class ExhibitionDetailResponse {
     private String identity;
     private String logo;
     private String url;
-    private Layout layout;
+    private Layout page;
 }
