@@ -3,6 +3,7 @@ package com.nammaexpo.expection;
 import com.google.common.collect.ImmutableMap;
 import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.response.MessageResponse;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,6 +44,11 @@ public class ExpoExpectionMapper {
     @ExceptionHandler(value = {AccessDeniedException.class})
     public ResponseEntity<MessageResponse> accessDenied(Exception exception) {
         return error(ACCESS_DENIED, exception);
+    }
+
+    @ExceptionHandler(value = {MalformedJwtException.class})
+    public ResponseEntity<MessageResponse> invalidToken(Exception exception) {
+        return error(TOKEN_VERIFICATION_FAILED, exception);
     }
 
     @ExceptionHandler(value = {DataIntegrityViolationException.class, SQLIntegrityConstraintViolationException.class})

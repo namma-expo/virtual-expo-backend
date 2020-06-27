@@ -5,6 +5,7 @@ import com.nammaexpo.expection.ExpoException;
 import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.payload.request.ContactsRequest;
 import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
+import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
 import com.nammaexpo.persistance.dao.ExhibitionModeratorsRepository;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.ExhibitionContactEntity;
@@ -33,18 +34,20 @@ public class ContactsController {
 
     private UserRepository userRepository;
 
-    private ExhibitionModeratorsRepository moderatorsRepository;
+    //private ExhibitionModeratorsRepository moderatorsRepository;
 
-    ExhibitionContactRepository contactsRepo;
+    private ExhibitionContactRepository contactsRepo;
+
+    private ExhibitionDetailsRepository exhibitionDetails;
 
     @Autowired
-    public ContactsController(UserRepository userRepository, ExhibitionModeratorsRepository moderatorsRepository,
-                              ExhibitionContactRepository contactsRepo) {
+    public ContactsController(UserRepository userRepository, ExhibitionContactRepository contactsRepo,
+                              ExhibitionDetailsRepository exhibitionDetails) {
         this.userRepository = userRepository;
-        this.moderatorsRepository = moderatorsRepository;
+        //this.moderatorsRepository = moderatorsRepository;
         this.contactsRepo = contactsRepo;
+        this.exhibitionDetails = exhibitionDetails;
     }
-
 
     @ApiOperation(value = "Add new contact details",
             notes = "Exhibitor can collect visitors contact details",
@@ -69,13 +72,19 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
+        //TODO when exhibitor moderator is implemented we can allow only for active moderators
+        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EXHIBITOR_ACCESS_DENIED)
                 );
-        ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
+        //ExhibitionDetailsEntity exhibitionDetail = moderatorEntity.getExhibitionDetails();
+        */
+        ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
+                .orElseThrow(()->
+                        ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
+                );
 
-        Optional<ExhibitionContactEntity> optionalContacts = contactsRepo.findByEmailAndExhibitionDetails(contact.getEmail(), exhibitionDetails);
+        Optional<ExhibitionContactEntity> optionalContacts = contactsRepo.findByEmailAndExhibitionDetails(contact.getEmail(), exhibitionDetail);
 
         if (optionalContacts.isPresent()) {
             throw ExpoException.error(MessageCode.EMAIL_IN_USE);
@@ -89,7 +98,7 @@ public class ContactsController {
                 .phone1(contact.getPhone1())
                 .phone2(contact.getPhone2())
                 .notes(contact.getNotes())
-                .exhibitionDetails(exhibitionDetails)
+                .exhibitionDetails(exhibitionDetail)
                 .createdBy(userEntity.getId()).build());
 
         return ResponseEntity.ok(MessageResponse.builder()
@@ -119,13 +128,19 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
+        //TODO when exhibitor moderator is implemented we can allow only for active moderators
+        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EXHIBITOR_ACCESS_DENIED)
                 );
-        ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
+        //ExhibitionDetailsEntity exhibitionDetail = moderatorEntity.getExhibitionDetails();
+        */
+        ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
+                .orElseThrow(()->
+                        ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
+                );
 
-        List<ExhibitionContactEntity> contactsList = contactsRepo.findAllByExhibitionDetails(exhibitionDetails);
+        List<ExhibitionContactEntity> contactsList = contactsRepo.findAllByExhibitionDetails(exhibitionDetail);
 
         List<ContactsRequest> allContacts = new ArrayList<>();
         if (!contactsList.isEmpty()) {
@@ -168,13 +183,18 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
+        //TODO when exhibitor moderator is implemented we can allow only for active moderators
+        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EXHIBITOR_ACCESS_DENIED)
                 );
-        ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-
-        ExhibitionContactEntity contactEntity = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetails)
+        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
+        */
+        ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
+                .orElseThrow(()->
+                        ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
+                );
+        ExhibitionContactEntity contactEntity = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
                 .orElseThrow(() ->  ExpoException.error(
                         MessageCode.CONTACTS_NOT_FOUND
         ));
@@ -212,13 +232,18 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
+        //TODO when exhibitor moderator is implemented we can allow only for active moderators
+        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EXHIBITOR_ACCESS_DENIED)
                 );
-        ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-
-        ExhibitionContactEntity contact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetails)
+        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
+        */
+        ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
+                .orElseThrow(()->
+                        ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
+                );
+        ExhibitionContactEntity contact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.CONTACTS_NOT_FOUND)
                 );
@@ -251,13 +276,18 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
+        //TODO when exhibitor moderator is implemented we can allow only for active moderators
+        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EXHIBITOR_ACCESS_DENIED)
                 );
-        ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-
-        ExhibitionContactEntity visitorContact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetails)
+        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
+        */
+        ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
+                .orElseThrow(()->
+                        ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
+                );
+        ExhibitionContactEntity visitorContact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
                 .orElseThrow(() -> ExpoException.error(
                         MessageCode.EMAIL_NOT_FOUND)
                 );
@@ -269,7 +299,7 @@ public class ContactsController {
         visitorContact.setPhone1(contact.getPhone1());
         visitorContact.setPhone2(contact.getPhone2());
         visitorContact.setNotes(contact.getNotes());
-        visitorContact.setExhibitionDetails(exhibitionDetails);
+        visitorContact.setExhibitionDetails(exhibitionDetail);
         visitorContact.setUpdatedBy(userEntity.getId());
         contactsRepo.save(visitorContact);
 
