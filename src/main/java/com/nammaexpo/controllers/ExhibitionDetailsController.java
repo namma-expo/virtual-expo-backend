@@ -22,7 +22,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Api(tags = "Exhibition Details Controller")
@@ -49,10 +48,9 @@ public class ExhibitionDetailsController {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.TRANSACTION_NOT_FOUND)
-                );
+        UserEntity userEntity = userRepository
+                .findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
 
         Optional<ExhibitionDetailsEntity> entity = exhibitionDetailsRepository
                 .findByUrl(exhibitionRequest.getUrl());
@@ -87,16 +85,13 @@ public class ExhibitionDetailsController {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
-                MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
+        UserEntity userEntity = userRepository
+                .findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
 
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
                 .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
 
         exhibitionDetailsEntity.setName(exhibitionRequest.getName());
         exhibitionDetailsEntity.setLogo(exhibitionRequest.getLogo());
@@ -116,12 +111,8 @@ public class ExhibitionDetailsController {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException
-                .error(MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName).orElseThrow(
-                expoExceptionSupplier
-        );
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
 
         return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
                 .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
@@ -130,7 +121,7 @@ public class ExhibitionDetailsController {
                         .logo(exhibitionDetailsEntity.getLogo())
                         .page(exhibitionDetailsEntity.getPageDetails())
                         .build())
-                .orElseThrow(expoExceptionSupplier);
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
     }
 
     @GetMapping(value = "/exhibitions/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -163,6 +154,6 @@ public class ExhibitionDetailsController {
                         .logo(exhibitionDetailsEntity.getLogo())
                         .page(exhibitionDetailsEntity.getPageDetails())
                         .build())
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
     }
 }

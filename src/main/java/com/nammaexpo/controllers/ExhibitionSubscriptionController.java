@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Api(tags = "Exhibition Subscription Controller")
@@ -45,19 +44,7 @@ public class ExhibitionSubscriptionController {
             @PathVariable("planId") SubscriptionPlan planId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
-                MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
@@ -86,18 +73,7 @@ public class ExhibitionSubscriptionController {
             @PathVariable("planId") SubscriptionPlan planId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
-                MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
@@ -126,18 +102,7 @@ public class ExhibitionSubscriptionController {
     public List<SubscriptionDetailResponse> getActiveSubscription(
             @RequestHeader(value = "Authorization") String authorization) {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
-                MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         return exhibitionDetails.getSubscriptions().stream()
                 .filter(subscription -> subscription.getDeletedAt() == null)
@@ -147,5 +112,19 @@ public class ExhibitionSubscriptionController {
                         .createdAt(exhibitionSubscriptionEntity.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private ExhibitionDetailsEntity getExhibitionDetailsBasedOnUser() {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.USER_NOT_FOUND));
+
+        return exhibitionDetailsRepository
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.EXHIBITION_NOT_FOUND));
     }
 }

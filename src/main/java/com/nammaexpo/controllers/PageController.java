@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.function.Supplier;
 
 @Api(tags = "Exhibition Page Controller")
 @Slf4j
@@ -44,18 +43,7 @@ public class PageController {
             @RequestHeader(value = "Authorization") String authorization
     ) throws JsonProcessingException {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(
-                MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+        ExhibitionDetailsEntity exhibitionDetailsEntity = getExhibitionDetailsBasedOnUser();
 
         pageRepository.save(PageEntity.builder()
                 .isActive(true)
@@ -75,17 +63,7 @@ public class PageController {
             @RequestHeader(value = "Authorization") String authorization
     ) {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
-                .map(ExhibitionDetailsEntity::getPageDetails)
-                .orElseThrow(expoExceptionSupplier);
+        return  getExhibitionDetailsBasedOnUser().getPageDetails();
     }
 
     @PutMapping("/pages")
@@ -95,17 +73,7 @@ public class PageController {
             @RequestHeader(value = "Authorization") String authorization
     ) throws JsonProcessingException {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(expoExceptionSupplier
-                );
-
-        ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByExhibitorId(userEntity.getId())
-                .orElseThrow(expoExceptionSupplier);
+        ExhibitionDetailsEntity exhibitionDetailsEntity = getExhibitionDetailsBasedOnUser();
 
         PageEntity pageEntity = exhibitionDetailsEntity.getPage();
 
@@ -116,5 +84,19 @@ public class PageController {
         return MessageResponse.builder()
                 .messageCode(MessageCode.PAGE_UPDATED)
                 .build();
+    }
+
+    private ExhibitionDetailsEntity getExhibitionDetailsBasedOnUser() {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.USER_NOT_FOUND));
+
+        return exhibitionDetailsRepository
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.EXHIBITION_NOT_FOUND));
     }
 }
