@@ -7,12 +7,15 @@ import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.payload.response.SubscriptionDetailResponse;
 import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
 import com.nammaexpo.persistance.dao.ExhibitionSubscriptionRepository;
+import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.ExhibitionDetailsEntity;
 import com.nammaexpo.persistance.model.ExhibitionSubscriptionEntity;
+import com.nammaexpo.persistance.model.UserEntity;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -30,19 +33,18 @@ public class ExhibitionSubscriptionController {
     private ExhibitionDetailsRepository exhibitionDetailsRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ExhibitionSubscriptionRepository subscriptionRepository;
 
-    @PostMapping("/subscriptions/{exhibitionId}/{planId}")
+    @PostMapping("/subscriptions/{planId}")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse startSubscription(
-            @PathVariable("exhibitionId") String exhibitionId,
             @PathVariable("planId") SubscriptionPlan planId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
@@ -65,16 +67,13 @@ public class ExhibitionSubscriptionController {
                 .build();
     }
 
-    @PutMapping("/subscriptions/{exhibitionId}/{planId}")
+    @PutMapping("/subscriptions/{planId}")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse upgradeSubscription(
-            @PathVariable("exhibitionId") String exhibitionId,
             @PathVariable("planId") SubscriptionPlan planId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         Set<ExhibitionSubscriptionEntity> subscriptionEntities = exhibitionDetails.getSubscriptions();
 
@@ -98,15 +97,12 @@ public class ExhibitionSubscriptionController {
                 .build();
     }
 
-    @GetMapping("/subscriptions/{exhibitionId}")
+    @GetMapping("/subscriptions")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public List<SubscriptionDetailResponse> getActiveSubscription(
-            @PathVariable("exhibitionId") String exhibitionId,
             @RequestHeader(value = "Authorization") String authorization) {
 
-        ExhibitionDetailsEntity exhibitionDetails = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        ExhibitionDetailsEntity exhibitionDetails = getExhibitionDetailsBasedOnUser();
 
         return exhibitionDetails.getSubscriptions().stream()
                 .filter(subscription -> subscription.getDeletedAt() == null)
@@ -116,5 +112,19 @@ public class ExhibitionSubscriptionController {
                         .createdAt(exhibitionSubscriptionEntity.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private ExhibitionDetailsEntity getExhibitionDetailsBasedOnUser() {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.USER_NOT_FOUND));
+
+        return exhibitionDetailsRepository
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.EXHIBITION_NOT_FOUND));
     }
 }

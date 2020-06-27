@@ -7,13 +7,16 @@ import com.nammaexpo.models.layout.Layout;
 import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
 import com.nammaexpo.persistance.dao.PageRepository;
+import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.ExhibitionDetailsEntity;
 import com.nammaexpo.persistance.model.PageEntity;
+import com.nammaexpo.persistance.model.UserEntity;
 import com.nammaexpo.utils.SerDe;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -28,19 +31,19 @@ public class PageController {
     private PageRepository pageRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ExhibitionDetailsRepository exhibitionDetailsRepository;
 
-    @PostMapping("/pages/{exhibitionId}")
+    @PostMapping("/pages")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse createPage(
-            @PathVariable("exhibitionId") String exhibitionId,
             @NotNull @RequestBody Layout layout,
             @RequestHeader(value = "Authorization") String authorization
     ) throws JsonProcessingException {
 
-        ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        ExhibitionDetailsEntity exhibitionDetailsEntity = getExhibitionDetailsBasedOnUser();
 
         pageRepository.save(PageEntity.builder()
                 .isActive(true)
@@ -54,29 +57,23 @@ public class PageController {
                 .build();
     }
 
-    @GetMapping("/pages/{exhibitionId}")
+    @GetMapping("/pages")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public Layout getPage(
-            @PathVariable("exhibitionId") String exhibitionId,
             @RequestHeader(value = "Authorization") String authorization
     ) {
 
-        return exhibitionDetailsRepository.findByIdentity(exhibitionId)
-                .map(ExhibitionDetailsEntity::getPageDetails)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        return  getExhibitionDetailsBasedOnUser().getPageDetails();
     }
 
-    @PutMapping("/pages/{exhibitionId}")
+    @PutMapping("/pages")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse updatePage(
-            @PathVariable("exhibitionId") String exhibitionId,
             @NotNull @RequestBody Layout layout,
             @RequestHeader(value = "Authorization") String authorization
     ) throws JsonProcessingException {
 
-        ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+        ExhibitionDetailsEntity exhibitionDetailsEntity = getExhibitionDetailsBasedOnUser();
 
         PageEntity pageEntity = exhibitionDetailsEntity.getPage();
 
@@ -87,5 +84,19 @@ public class PageController {
         return MessageResponse.builder()
                 .messageCode(MessageCode.PAGE_UPDATED)
                 .build();
+    }
+
+    private ExhibitionDetailsEntity getExhibitionDetailsBasedOnUser() {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.USER_NOT_FOUND));
+
+        return exhibitionDetailsRepository
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(() -> ExpoException.error(
+                        MessageCode.EXHIBITION_NOT_FOUND));
     }
 }

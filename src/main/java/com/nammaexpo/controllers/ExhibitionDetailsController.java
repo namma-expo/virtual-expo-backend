@@ -22,7 +22,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Api(tags = "Exhibition Details Controller")
@@ -49,10 +48,9 @@ public class ExhibitionDetailsController {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.TRANSACTION_NOT_FOUND)
-                );
+        UserEntity userEntity = userRepository
+                .findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
 
         Optional<ExhibitionDetailsEntity> entity = exhibitionDetailsRepository
                 .findByUrl(exhibitionRequest.getUrl());
@@ -77,18 +75,23 @@ public class ExhibitionDetailsController {
                 .build();
     }
 
-    @PutMapping(value = "/exhibitions/{exhibitionId}",
+    @PutMapping(value = "/exhibitions",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public MessageResponse updateExhibition(
             @RequestHeader(value = "Authorization") String authorization,
-            @PathVariable("exhibitionId") String exhibitionId,
             @RequestBody @NotNull ExhibitionRequest exhibitionRequest) {
 
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository
+                .findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
+
         ExhibitionDetailsEntity exhibitionDetailsEntity = exhibitionDetailsRepository
-                .findByIdentity(exhibitionId)
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
+                .findByExhibitorId(userEntity.getId())
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
 
         exhibitionDetailsEntity.setName(exhibitionRequest.getName());
         exhibitionDetailsEntity.setLogo(exhibitionRequest.getLogo());
@@ -99,6 +102,26 @@ public class ExhibitionDetailsController {
         return MessageResponse.builder()
                 .messageCode(MessageCode.EXHIBITION_UPDATED)
                 .build();
+    }
+
+    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('EXHIBITOR')")
+    public ExhibitionDetailResponse getExhibitionBasedOnExhibitor(
+            @RequestHeader(value = "Authorization") String authorization) {
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> ExpoException.error(MessageCode.USER_NOT_FOUND));
+
+        return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
+                .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
+                        .identity(exhibitionDetailsEntity.getIdentity())
+                        .name(exhibitionDetailsEntity.getName())
+                        .logo(exhibitionDetailsEntity.getLogo())
+                        .page(exhibitionDetailsEntity.getPageDetails())
+                        .build())
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
     }
 
     @GetMapping(value = "/exhibitions/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -129,33 +152,8 @@ public class ExhibitionDetailsController {
                         .identity(exhibitionDetailsEntity.getIdentity())
                         .name(exhibitionDetailsEntity.getName())
                         .logo(exhibitionDetailsEntity.getLogo())
-                        .layout(exhibitionDetailsEntity.getPageDetails())
+                        .page(exhibitionDetailsEntity.getPageDetails())
                         .build())
-                .orElseThrow(() -> ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND));
-    }
-
-
-    @GetMapping(value = "/exhibitions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ExhibitionDetailResponse getExhibitionBasedOnExhibitor(
-            @RequestHeader(value = "Authorization") String authorization) {
-
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Supplier<ExpoException> expoExceptionSupplier = () -> ExpoException
-                .error(MessageCode.TRANSACTION_NOT_FOUND);
-
-        UserEntity userEntity = userRepository.findByEmail(userName).orElseThrow(
-                expoExceptionSupplier
-        );
-
-        return exhibitionDetailsRepository.findByExhibitorId(userEntity.getId())
-                .map(exhibitionDetailsEntity -> ExhibitionDetailResponse.builder()
-                        .identity(exhibitionDetailsEntity.getIdentity())
-                        .name(exhibitionDetailsEntity.getName())
-                        .logo(exhibitionDetailsEntity.getLogo())
-                        .layout(exhibitionDetailsEntity.getPageDetails())
-                        .build())
-                .orElseThrow(expoExceptionSupplier);
+                .orElseThrow(() -> ExpoException.error(MessageCode.EXHIBITION_NOT_FOUND));
     }
 }

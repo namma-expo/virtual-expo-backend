@@ -44,7 +44,8 @@ public enum MessageCode {
     ACTIVE_SUBSCRIPTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "No Active Subscriptions Found"),
     SUBSCRIPTION_ACTIVATED(HttpStatus.CREATED, "Subscription Activated Successfully"),
     SUBSCRIPTION_UPGRADED(HttpStatus.CREATED, "Subscription Upgraded Successfully"),
-    EXHIBITOR_ACCESS_DENIED(HttpStatus.NOT_FOUND, "Exhibitor is not active");
+    EXHIBITOR_ACCESS_DENIED(HttpStatus.NOT_FOUND, "Exhibitor is not active"),
+    EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),;
 
     @Getter
     private final String code;
