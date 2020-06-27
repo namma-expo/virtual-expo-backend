@@ -37,6 +37,8 @@ public enum MessageCode {
     PAGE_UPDATED(HttpStatus.ACCEPTED, "Page updated successfully"),
     PROFILE_UPDATED(HttpStatus.ACCEPTED, "Profile updated successfully"),
     USER_HISTORY_LOGGED(HttpStatus.CREATED, "User history is logged successfully"),
+    FILE_UPLOAD_SUCCESS(HttpStatus.CREATED, "File Uploaded Successfully"),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "File not found"),
 
     TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Transaction not found"),
     EXHIBITION_EXISTS(HttpStatus.BAD_REQUEST, "Exhibition exists"),
