@@ -1,0 +1,13 @@
+{
+  "email": "siddusrb@gmail.com",
+  "name": "Siddesh",
+  "password": "sid@123",
+  "profile": {
+    "city": "dvg",
+    "company": "msi",
+    "country": "ind",
+    "phoneNumber": "9008921445",
+    "state": "kar"
+  },
+  "role": "EXHIBITOR"
+}
