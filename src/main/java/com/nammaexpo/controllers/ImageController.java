@@ -57,6 +57,7 @@ public class ImageController {
                 .fileName(file.getOriginalFilename())
                 .uploadedBy(userEntity.getId())
                 .fileSize(file.getSize())
+                .contentType(file.getContentType())
                 .build());
 
         return MessageResponse.builder()

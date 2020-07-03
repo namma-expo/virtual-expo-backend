@@ -47,6 +47,11 @@ public class FileMetadataEntity {
     private long fileSize;
 
     @Column(
+            name = "content_type"
+    )
+    private String contentType;
+
+    @Column(
             name = "uploaded_by",
             nullable = false
     )
@@ -64,11 +69,13 @@ public class FileMetadataEntity {
     private Date uploadedAt;
 
     @Builder
-    public FileMetadataEntity(String fileId, String fileName, String url, long fileSize, int uploadedBy) {
+    public FileMetadataEntity(String fileId, String fileName, String url, long fileSize, String contentType,
+                              int uploadedBy) {
         this.fileId = fileId;
         this.fileName = fileName;
         this.url = url;
         this.fileSize = fileSize;
+        this.contentType = contentType;
         this.uploadedBy = uploadedBy;
     }
 }
