@@ -10,7 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface ExhibitionContactRepository extends JpaRepository<ExhibitionContactEntity, Integer> {
+
     Optional<ExhibitionContactEntity> findByEmail(String email);
+
     List<ExhibitionContactEntity> findAllByExhibitionDetails(ExhibitionDetailsEntity exhibitionDetails);
-    Optional<ExhibitionContactEntity> findByEmailAndExhibitionDetails(String email, ExhibitionDetailsEntity exhibitionDetails);
+
+    Optional<ExhibitionContactEntity> findByEmailAndExhibitionDetails(
+            String email, ExhibitionDetailsEntity exhibitionDetails);
 }

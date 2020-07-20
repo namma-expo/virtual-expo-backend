@@ -9,5 +9,6 @@ import lombok.*;
 @Builder
 public class Theme {
     private String primaryColor;
+    private String secondaryColor;
     private String buttonColor;
 }

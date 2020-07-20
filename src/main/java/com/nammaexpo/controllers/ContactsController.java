@@ -1,16 +1,14 @@
 package com.nammaexpo.controllers;
 
-import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.expection.ExpoException;
-import com.nammaexpo.payload.response.MessageResponse;
+import com.nammaexpo.models.enums.MessageCode;
 import com.nammaexpo.payload.request.ContactsRequest;
+import com.nammaexpo.payload.response.MessageResponse;
 import com.nammaexpo.persistance.dao.ExhibitionContactRepository;
 import com.nammaexpo.persistance.dao.ExhibitionDetailsRepository;
-import com.nammaexpo.persistance.dao.ExhibitionModeratorsRepository;
 import com.nammaexpo.persistance.dao.UserRepository;
 import com.nammaexpo.persistance.model.ExhibitionContactEntity;
 import com.nammaexpo.persistance.model.ExhibitionDetailsEntity;
-import com.nammaexpo.persistance.model.ExhibitionModeratorEntity;
 import com.nammaexpo.persistance.model.UserEntity;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -34,8 +32,6 @@ public class ContactsController {
 
     private UserRepository userRepository;
 
-    //private ExhibitionModeratorsRepository moderatorsRepository;
-
     private ExhibitionContactRepository contactsRepo;
 
     private ExhibitionDetailsRepository exhibitionDetails;
@@ -44,7 +40,6 @@ public class ContactsController {
     public ContactsController(UserRepository userRepository, ExhibitionContactRepository contactsRepo,
                               ExhibitionDetailsRepository exhibitionDetails) {
         this.userRepository = userRepository;
-        //this.moderatorsRepository = moderatorsRepository;
         this.contactsRepo = contactsRepo;
         this.exhibitionDetails = exhibitionDetails;
     }
@@ -61,8 +56,8 @@ public class ContactsController {
                     message = "CONTACT_REGISTRATION_FAILED")
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @PostMapping("/contact")
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @PostMapping("/contacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> addContact(@RequestBody @Valid ContactsRequest contact) {
 
@@ -72,19 +67,13 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        //TODO when exhibitor moderator is implemented we can allow only for active moderators
-        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.EXHIBITOR_ACCESS_DENIED)
-                );
-        //ExhibitionDetailsEntity exhibitionDetail = moderatorEntity.getExhibitionDetails();
-        */
         ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
-        Optional<ExhibitionContactEntity> optionalContacts = contactsRepo.findByEmailAndExhibitionDetails(contact.getEmail(), exhibitionDetail);
+        Optional<ExhibitionContactEntity> optionalContacts = contactsRepo.findByEmailAndExhibitionDetails(
+                contact.getEmail(), exhibitionDetail);
 
         if (optionalContacts.isPresent()) {
             throw ExpoException.error(MessageCode.EMAIL_IN_USE);
@@ -117,10 +106,10 @@ public class ContactsController {
                     message = "CONTACTS_NOT_FOUND")
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @GetMapping("/contacts")
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @GetMapping("/contacts/all")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<List<ContactsRequest>> getAllContacts() {
+    public List<ContactsRequest> getAllContacts() {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(userName)
@@ -128,38 +117,24 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        //TODO when exhibitor moderator is implemented we can allow only for active moderators
-        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.EXHIBITOR_ACCESS_DENIED)
-                );
-        //ExhibitionDetailsEntity exhibitionDetail = moderatorEntity.getExhibitionDetails();
-        */
         ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
                 );
 
         List<ExhibitionContactEntity> contactsList = contactsRepo.findAllByExhibitionDetails(exhibitionDetail);
 
-        List<ContactsRequest> allContacts = new ArrayList<>();
-        if (!contactsList.isEmpty()) {
-            for (ExhibitionContactEntity contactEntity :
-                    contactsList) {
-                allContacts.add(ContactsRequest.builder()
-                        .email(contactEntity.getEmail())
-                        .name(contactEntity.getName())
-                        .company(contactEntity.getCompany())
-                        .notes(contactEntity.getNotes())
-                        .occupation(contactEntity.getOccupation())
-                        .phone1(contactEntity.getPhone1())
-                        .phone2(contactEntity.getPhone2())
-                        .build());
-            }
-        } else
-            throw ExpoException.error(MessageCode.CONTACTS_NOT_FOUND);
-
-        return new ResponseEntity<>(allContacts, HttpStatus.OK);
+        return contactsList.stream()
+                .map(contacts -> ContactsRequest.builder()
+                        .email(contacts.getEmail())
+                        .name(contacts.getName())
+                        .company(contacts.getCompany())
+                        .notes(contacts.getNotes())
+                        .occupation(contacts.getOccupation())
+                        .phone1(contacts.getPhone1())
+                        .phone2(contacts.getPhone2())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get single contact details",
@@ -172,10 +147,10 @@ public class ContactsController {
                     message = "CONTACTS_NOT_FOUND")
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @GetMapping( path = "/contact")
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @GetMapping(path = "/contacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<ContactsRequest> getContact(@RequestHeader String email) {
+    public ResponseEntity<ContactsRequest> getContact(@RequestHeader(name = "email") String email) {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(userName)
@@ -183,30 +158,23 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        //TODO when exhibitor moderator is implemented we can allow only for active moderators
-        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.EXHIBITOR_ACCESS_DENIED)
-                );
-        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-        */
         ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
                 );
         ExhibitionContactEntity contactEntity = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
-                .orElseThrow(() ->  ExpoException.error(
+                .orElseThrow(() -> ExpoException.error(
                         MessageCode.CONTACTS_NOT_FOUND
-        ));
+                ));
         ContactsRequest contactsRequest = ContactsRequest.builder()
-                    .email(contactEntity.getEmail())
-                    .name(contactEntity.getName())
-                    .company(contactEntity.getCompany())
-                    .notes(contactEntity.getNotes())
-                    .occupation(contactEntity.getOccupation())
-                    .phone1(contactEntity.getPhone1())
-                    .phone2(contactEntity.getPhone2())
-                    .build();
+                .email(contactEntity.getEmail())
+                .name(contactEntity.getName())
+                .company(contactEntity.getCompany())
+                .notes(contactEntity.getNotes())
+                .occupation(contactEntity.getOccupation())
+                .phone1(contactEntity.getPhone1())
+                .phone2(contactEntity.getPhone2())
+                .build();
 
         return new ResponseEntity<>(contactsRequest, HttpStatus.OK);
     }
@@ -221,8 +189,8 @@ public class ContactsController {
                     message = "CONTACTS_NOT_FOUND")
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @DeleteMapping("/contact")
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @DeleteMapping("/contacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
     public ResponseEntity<MessageResponse> deleteContact(@RequestHeader String email) {
 
@@ -232,15 +200,8 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        //TODO when exhibitor moderator is implemented we can allow only for active moderators
-        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.EXHIBITOR_ACCESS_DENIED)
-                );
-        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-        */
         ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
                 );
         ExhibitionContactEntity contact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
@@ -265,10 +226,12 @@ public class ContactsController {
                     message = "UPDATE_CONTACT_FAILED")
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true,
-            allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    @PutMapping("/contact")
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    @PutMapping("/contacts")
     @PreAuthorize("hasAuthority('EXHIBITOR')")
-    public ResponseEntity<MessageResponse> updateContact(@RequestBody @Valid ContactsRequest contact, @RequestHeader String email) {
+    public ResponseEntity<MessageResponse> updateContact(
+            @RequestBody @Valid ContactsRequest contact,
+            @RequestHeader String email) {
 
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity userEntity = userRepository.findByEmail(userName)
@@ -276,15 +239,8 @@ public class ContactsController {
                         MessageCode.ACCESS_DENIED)
                 );
 
-        //TODO when exhibitor moderator is implemented we can allow only for active moderators
-        /*ExhibitionModeratorEntity moderatorEntity = moderatorsRepository.findByIdAndIsActive(userEntity.getId(), Boolean.TRUE)
-                .orElseThrow(() -> ExpoException.error(
-                        MessageCode.EXHIBITOR_ACCESS_DENIED)
-                );
-        //ExhibitionDetailsEntity exhibitionDetails = moderatorEntity.getExhibitionDetails();
-        */
         ExhibitionDetailsEntity exhibitionDetail = exhibitionDetails.findByExhibitorId(userEntity.getId())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         ExpoException.error(MessageCode.TRANSACTION_NOT_FOUND)
                 );
         ExhibitionContactEntity visitorContact = contactsRepo.findByEmailAndExhibitionDetails(email, exhibitionDetail)
@@ -292,7 +248,6 @@ public class ContactsController {
                         MessageCode.EMAIL_NOT_FOUND)
                 );
 
-        visitorContact.setEmail(contact.getEmail());
         visitorContact.setName(contact.getName());
         visitorContact.setOccupation(contact.getOccupation());
         visitorContact.setCompany(contact.getCompany());
@@ -305,7 +260,7 @@ public class ContactsController {
 
         return new ResponseEntity<>(MessageResponse.builder()
                 .messageCode(MessageCode.UPDATE_CONTACT_SUCCESS)
-                .build(),HttpStatus.ACCEPTED);
+                .build(), HttpStatus.ACCEPTED);
     }
 
 }
